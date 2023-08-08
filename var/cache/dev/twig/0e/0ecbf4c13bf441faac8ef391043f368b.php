@@ -92,7 +92,10 @@ class __TwigTemplate_9afe1f2100ec511fc7af532506af6e1e extends Template
 
 <div class=\"example-wrapper\">
     <h1>Foro ISFT177</h1>
-
+    ";
+        // line 13
+        echo $this->extensions['Symfony\Bridge\Twig\Extension\DumpExtension']->dump($this->env, $context, (isset($context["posts"]) || array_key_exists("posts", $context) ? $context["posts"] : (function () { throw new RuntimeError('Variable "posts" does not exist.', 13, $this->source); })()));
+        echo "
     This friendly message is coming from:
     <ul>
         <li>Your controller at <code><a href=\"";
@@ -126,7 +129,7 @@ class __TwigTemplate_9afe1f2100ec511fc7af532506af6e1e extends Template
 
     public function getDebugInfo()
     {
-        return array (  104 => 17,  100 => 16,  88 => 6,  78 => 5,  59 => 3,  36 => 1,);
+        return array (  107 => 17,  103 => 16,  97 => 13,  88 => 6,  78 => 5,  59 => 3,  36 => 1,);
     }
 
     public function getSourceContext()
@@ -143,7 +146,7 @@ class __TwigTemplate_9afe1f2100ec511fc7af532506af6e1e extends Template
 
 <div class=\"example-wrapper\">
     <h1>Foro ISFT177</h1>
-
+    {{ dump(posts) }}
     This friendly message is coming from:
     <ul>
         <li>Your controller at <code><a href=\"{{ '/home/noiszia/Github/Foro-ISFT177/src/Controller/PostController.php'|file_link(0) }}\">src/Controller/PostController.php</a></code></li>

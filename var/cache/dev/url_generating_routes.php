@@ -16,5 +16,5 @@ return [
     '_profiler_router' => [['token'], ['_controller' => 'web_profiler.controller.router::panelAction'], [], [['text', '/router'], ['variable', '/', '[^/]++', 'token', true], ['text', '/_profiler']], [], [], []],
     '_profiler_exception' => [['token'], ['_controller' => 'web_profiler.controller.exception_panel::body'], [], [['text', '/exception'], ['variable', '/', '[^/]++', 'token', true], ['text', '/_profiler']], [], [], []],
     '_profiler_exception_css' => [['token'], ['_controller' => 'web_profiler.controller.exception_panel::stylesheet'], [], [['text', '/exception.css'], ['variable', '/', '[^/]++', 'token', true], ['text', '/_profiler']], [], [], []],
-    'app_post' => [[], ['_controller' => 'App\\Controller\\PostController::index'], [], [['text', '/post']], [], [], []],
+    'app_post' => [['id'], ['_controller' => 'App\\Controller\\PostController::index'], [], [['variable', '/', '[^/]++', 'id', true], ['text', '/post']], [], [], []],
 ];
