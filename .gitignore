@@ -8,6 +8,7 @@
 #/var/
 /vendor/
 .env
+/public/phpmyadmin/
 ###< symfony/framework-bundle ###
 
 ###> phpunit/phpunit ###
