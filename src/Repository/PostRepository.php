@@ -21,6 +21,26 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
+    /**
+     * Devuelve los datos relacionados a un post
+     * mediante la ID ingresada.
+     *
+     * @param $id
+     * @return float|int|mixed|string
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findPost($id){
+        return $this->getEntityManager()
+            ->createQuery('
+                SELECT post.id, post.title, post.type
+                FROM App:Post post
+                WHERE post.id =:id
+            ')
+            ->setParameter('id', $id)
+            ->getSingleResult();
+    }
+
 //    /**
 //     * @return Post[] Returns an array of Post objects
 //     */
