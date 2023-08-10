@@ -11,6 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
 {
+    /**
+     *  Todas las opciones seleccionables en el campo "type"
+     *  del formulario Post
+     */
+    const POST_TYPE_CHOICES = ['Opinión' => 'Opinión', 'Humor' => 'Humor'];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

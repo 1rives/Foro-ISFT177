@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Entity\User;
+use App\Form\PostType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,18 +24,26 @@ class PostController extends AbstractController
         $this->em = $em;
     }
 
-    #[Route('/post/{id}', name: 'app_post')]
-    public function index($id): Response
+    #[Route('/', name: 'app_post')]
+    public function index(Request $request): Response
     {
-        // Busca el post con ID de 1
-        $posts = $this->em->getRepository(Post::class)->findBy(['id' => 1]);
+        $post = new Post();
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
 
-        // Llama a la función custom findPost
-        $custom_post = $this->em->getRepository(Post::class)->findPost($id);
+        if($form->isSubmitted() && $form->isValid()) {
+            // Especifico el usuario siendo el único dato faltante
+            $user = $this->em->getRepository(User::class)->find(1);
+            $post->setUser($user);
+
+            $this->em->persist($post);
+            $this->em->flush();
+            
+            return $this->redirectToRoute('app_post');
+        }
 
         return $this->render('post/index.html.twig', [
-            'posts' => $posts,
-            'custom_post' => $custom_post
+            'postForm' => $form->createView()
         ]);
     }
 
@@ -42,24 +52,24 @@ class PostController extends AbstractController
      *
      * @return JsonResponse
      */
-    #[Route('/insert/post', name: 'insert_post')]
-    public function insert() {
-        $post = new Post('Post insertado',
-            'testing',
-            'Creado mediante el Entity Manager de Symfony',
-            'supafile.exe',
-            'insert_test');
-        $user = $this->em->getRepository(User::class)->find(1);
-
-        $post->setTitle('Post insertado')
-            ->setUser($user);
-
-        // Crea una instancia persistente
-        $this->em->persist($post);
-
-        // Guarda en la base de datos
-        $this->em->flush();
-
-        return new JsonResponse(['success' => true]);
-    }
+//    #[Route('/insert/post', name: 'insert_post')]
+//    public function insert() {
+//        $post = new Post('Post insertado',
+//            'testing',
+//            'Creado mediante el Entity Manager de Symfony',
+//            'supafile.exe',
+//            'insert_test');
+//        $user = $this->em->getRepository(User::class)->find(1);
+//
+//        $post->setTitle('Post insertado')
+//            ->setUser($user);
+//
+//        // Crea una instancia persistente
+//        $this->em->persist($post);
+//
+//        // Guarda en la base de datos
+//        $this->em->flush();
+//
+//        return new JsonResponse(['success' => true]);
+//    }
 }

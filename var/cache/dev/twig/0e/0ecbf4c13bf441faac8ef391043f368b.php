@@ -92,25 +92,11 @@ class __TwigTemplate_9afe1f2100ec511fc7af532506af6e1e extends Template
 
 <div class=\"example-wrapper\">
     <h1>Foro ISFT177</h1>
-    ";
-        // line 13
-        echo $this->extensions['Symfony\Bridge\Twig\Extension\DumpExtension']->dump($this->env, $context, (isset($context["posts"]) || array_key_exists("posts", $context) ? $context["posts"] : (function () { throw new RuntimeError('Variable "posts" does not exist.', 13, $this->source); })()));
-        echo "
+    <p>Agrega un nuevo post</p>
     ";
         // line 14
-        echo $this->extensions['Symfony\Bridge\Twig\Extension\DumpExtension']->dump($this->env, $context, (isset($context["custom_post"]) || array_key_exists("custom_post", $context) ? $context["custom_post"] : (function () { throw new RuntimeError('Variable "custom_post" does not exist.', 14, $this->source); })()));
+        echo         $this->env->getRuntime('Symfony\Component\Form\FormRenderer')->renderBlock((isset($context["postForm"]) || array_key_exists("postForm", $context) ? $context["postForm"] : (function () { throw new RuntimeError('Variable "postForm" does not exist.', 14, $this->source); })()), 'form');
         echo "
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href=\"";
-        // line 17
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\CodeExtension']->getFileLink("/home/noiszia/Github/Foro-ISFT177/src/Controller/PostController.php", 0), "html", null, true);
-        echo "\">src/Controller/PostController.php</a></code></li>
-        <li>Your template at <code><a href=\"";
-        // line 18
-        echo twig_escape_filter($this->env, $this->extensions['Symfony\Bridge\Twig\Extension\CodeExtension']->getFileLink("/home/noiszia/Github/Foro-ISFT177/templates/post/index.html.twig", 0), "html", null, true);
-        echo "\">templates/post/index.html.twig</a></code></li>
-    </ul>
 </div>
 ";
         
@@ -133,7 +119,7 @@ class __TwigTemplate_9afe1f2100ec511fc7af532506af6e1e extends Template
 
     public function getDebugInfo()
     {
-        return array (  111 => 18,  107 => 17,  101 => 14,  97 => 13,  88 => 6,  78 => 5,  59 => 3,  36 => 1,);
+        return array (  98 => 14,  88 => 6,  78 => 5,  59 => 3,  36 => 1,);
     }
 
     public function getSourceContext()
@@ -150,13 +136,8 @@ class __TwigTemplate_9afe1f2100ec511fc7af532506af6e1e extends Template
 
 <div class=\"example-wrapper\">
     <h1>Foro ISFT177</h1>
-    {{ dump(posts) }}
-    {{ dump(custom_post) }}
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href=\"{{ '/home/noiszia/Github/Foro-ISFT177/src/Controller/PostController.php'|file_link(0) }}\">src/Controller/PostController.php</a></code></li>
-        <li>Your template at <code><a href=\"{{ '/home/noiszia/Github/Foro-ISFT177/templates/post/index.html.twig'|file_link(0) }}\">templates/post/index.html.twig</a></code></li>
-    </ul>
+    <p>Agrega un nuevo post</p>
+    {{ form(postForm) }}
 </div>
 {% endblock %}
 ", "post/index.html.twig", "/home/noiszia/Github/Foro-ISFT177/templates/post/index.html.twig");
