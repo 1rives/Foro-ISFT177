@@ -30,7 +30,7 @@ class PostRepository extends ServiceEntityRepository
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findPost($id){
+    public function findPost($id) {
         return $this->getEntityManager()
             ->createQuery('
                 SELECT post.id, post.title, post.type
