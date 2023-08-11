@@ -11,6 +11,9 @@
 /public/phpmyadmin/
 ###< symfony/framework-bundle ###
 
+###< PHPStorm files ###
+/.idea/
+
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
