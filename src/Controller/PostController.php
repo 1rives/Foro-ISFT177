@@ -31,7 +31,12 @@ class PostController extends AbstractController
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
+        $posts = $this->em->getRepository(Post::class)->findAllPosts();
+
         if($form->isSubmitted() && $form->isValid()) {
+            $url = str_replace(" ", "-", $form->get('title')->getData());
+            $post->setUrl(strtolower($url));
+
             // Especifico el usuario siendo el único dato faltante
             $user = $this->em->getRepository(User::class)->find(1);
             $post->setUser($user);
@@ -43,7 +48,8 @@ class PostController extends AbstractController
         }
 
         return $this->render('post/index.html.twig', [
-            'postForm' => $form->createView()
+            'postForm' => $form->createView(),
+            'posts' => $posts
         ]);
     }
 

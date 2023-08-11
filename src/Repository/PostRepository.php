@@ -22,23 +22,28 @@ class PostRepository extends ServiceEntityRepository
     }
 
     /**
-     * Devuelve los datos relacionados a un post
-     * mediante la ID ingresada.
+     * Devuelve todos los posts de la base de datos
      *
-     * @param $id
      * @return float|int|mixed|string
-     * @throws \Doctrine\ORM\NoResultException
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findPost($id) {
+    public function findAllPosts(): mixed
+    {
         return $this->getEntityManager()
             ->createQuery('
-                SELECT post.id, post.title, post.type
+                SELECT 
+                    post.id, 
+                    post.title, 
+                    post.description, 
+                    post.file, 
+                    post.creation_date, 
+                    post.url,
+                    user.id AS user_id,
+                    user.email AS user_username
                 FROM App:Post post
-                WHERE post.id =:id
+                    JOIN post.user user
+                ORDER BY post.id DESC
             ')
-            ->setParameter('id', $id)
-            ->getSingleResult();
+            ->getResult();
     }
 
 //    /**
