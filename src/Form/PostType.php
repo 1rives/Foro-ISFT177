@@ -24,7 +24,7 @@ class PostType extends AbstractType
                 'required' => true
             ])
             ->add('description', TextareaType::class, ['required' => true])
-            ->add('file') // Agregar FileType
+            ->add('file', FileType::class)
             //->add('creation_date', DateTimeType::class)
             ->add('url', TextType::class, ['required' => true])
             ->add('submit', SubmitType::class)
