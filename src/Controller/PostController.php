@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PostController extends AbstractController
 {
@@ -25,7 +26,7 @@ class PostController extends AbstractController
     }
 
     #[Route('/', name: 'app_post')]
-    public function index(Request $request): Response
+    public function index(Request $request, SluggerInterface $slugger): Response
     {
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
@@ -34,6 +35,26 @@ class PostController extends AbstractController
         $posts = $this->em->getRepository(Post::class)->findAllPosts();
 
         if($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('file')->getData();
+            if($file) {
+                $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+
+                // Move the file to the directory where brochures are stored
+                try {
+                    $file->move(
+                        $this->getParameter('files_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    throw new \Exception('Ha habido un problema con su archivo');
+                }
+
+                $post->setFile($newFilename);
+            }
+
+
             $url = str_replace(" ", "-", $form->get('title')->getData());
             $post->setUrl(strtolower($url));
 

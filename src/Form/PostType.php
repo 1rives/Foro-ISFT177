@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Post;
 use Doctrine\DBAL\Types\DateTimeType;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -24,7 +25,10 @@ class PostType extends AbstractType
                 'required' => true
             ])
             ->add('description', TextareaType::class, ['required' => true])
-            ->add('file', FileType::class, ['required' => false])
+            ->add('file', FileType::class, [
+                'label' => 'photo',
+                'required' => false,
+            ])
             ->add('submit', SubmitType::class)
         ;
     }
