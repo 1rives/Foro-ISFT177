@@ -36,6 +36,7 @@ class PostController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid()) {
             $file = $form->get('file')->getData();
+
             if($file) {
                 $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
@@ -53,7 +54,6 @@ class PostController extends AbstractController
 
                 $post->setFile($newFilename);
             }
-
 
             $url = str_replace(" ", "-", $form->get('title')->getData());
             $post->setUrl(strtolower($url));
@@ -73,6 +73,14 @@ class PostController extends AbstractController
             'posts' => $posts
         ]);
     }
+
+
+    #[Route('/post/details/{id}', name: 'postDetails')]
+    public function postDetails(Post $post) {
+        
+        return $this->render('post/post-details.html.twig', ['post' => $post]);
+    }
+
 
     /**
      * Inserta un nuevo post en la base de datos

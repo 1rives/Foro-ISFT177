@@ -15,6 +15,9 @@
     <h1>Foro ISFT177</h1>
     <p>Agrega un nuevo post</p>
     {{ form(postForm) }}
+    <br>
+    <hr>
+    <br>
     {{ dump(posts) }}
 
     <table>
@@ -29,7 +32,7 @@
         <tbody>
         {% for post in posts %}
             <tr>
-                <td>{{ post.id }}</td>
+                <td><a href="{{ path('postDetails', {id:post.id}) }}">Ver</a></td>
                 <td>{{ post.title }}</td>
                 <td>{{ post.description }}</td>
                 <td>{{ post.creation_date | date("d/m/Y") }}</td>
