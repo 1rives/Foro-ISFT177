@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+
+        {% block meta %}
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="title" content="Foro ISFT 177">
+            <meta name="description" content="El Foro del ISFT 177 es un espacio virtual para compartir entre alumnos.">
+            <meta name="keywords" content="Foro, terciario, ISFT, ISFT177, Forum">
+            <meta name="robots" content="index, nofollow">
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <meta name="language" content="Spanish">
+        {% endblock %}
+
+        <title>{% block title %} Foro ISFT 177 {% endblock %}</title>
+
         {% block stylesheets %}
-            {# CSS temporal, al finalizar el curso realizar estilos #}
-            <link rel="stylesheet" href="https://unpkg.com/mvp.css">
+            <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" type="text/css">
+            <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css">
+            <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+            <!-- <link href="{{ asset('css/animate.css') }}" rel="stylesheet" type="text/css"> -->
         {% endblock %}
 
         {% block javascripts %}
+            <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
         {% endblock %}
     </head>
     <body>
         {% block body %}
+            {% block navbar %}
+                {% include 'general/navbar.top.html.twig' %}
+                {% include 'general/navbar.bottom.html.twig' %}
 
-            Buenos dias desde base.html.twig!
+                {% if show_navbar_hero is defined %}
+                    {% include 'general/hero.html.twig' %}
+                {% endif %}
+            {% endblock %}
+
 
         {% endblock %}
+        {% include 'general/footer.html.twig' %}
     </body>
 </html>
