@@ -21,24 +21,26 @@
         {% endblock %}
 
     </head>
-    <body>
+    <body class="bg-body-secondary">
         {% block body %}
-            {% block navbar %}
-                {% include 'general/navbar-top.html.twig' %}
-                {% include 'general/navbar-bottom.html.twig' %}
+            <div class="container-sm pt-xl-4 pt-md-3 pt-sm-2">
+                {% block navbar %}
+                    {% include 'general/navbar-top.html.twig' %}
+                    {% include 'general/navbar-bottom.html.twig' %}
 
-{#                {% if show_navbar_hero is defined %}#}
-{#                    {% include 'general/hero.html.twig' %}#}
-{#                {% endif %}#}
-            {% endblock %}
+                    {#                {% if show_navbar_hero is defined %}#}
+                    {#                    {% include 'general/hero.html.twig' %}#}
+                    {#                {% endif %}#}
+                {% endblock %}
 
 
+            </div>
         {% endblock %}
         {% include 'general/footer.html.twig' %}
 
         {% block javascripts %}
-          <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>
-            <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+{#          <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>#}
+          <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
         {% endblock %}
     </body>
 </html>
