@@ -1,0 +1,75 @@
+<!-- Start bottom navbar -->
+<nav class="navbar navbar-expand-lg bg-primary py-3">
+    <div class="container">
+        <div class="collapse navbar-collapse hid" id="navbarToggle">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+                    <a class="nav-link text-bg-primary active" aria-current="page" href="{{ path('app_post') }}">Inicio</a>
+                </li>
+
+                <li class="nav-item dropdown link-opacity-10-hover">
+                    <a class="nav-link dropdown-toggle text-bg-primary " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Action</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Another action</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Something else here</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-bg-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Action</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Another action</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Something else here</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-bg-primary" aria-current="page" href="{{ path('app_post') }}">Home</a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-bg-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Dropdown
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Action</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Another action</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Something else here</a></li>
+                    </ul>
+                </li>
+
+            </ul>
+
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <li class="nav-item list-unstyled dropdown">
+                    <a class="nav-link dropdown-toggle text-bg-primary" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ app.user.email }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Mi perfil</a></li>
+                        <li><a class="dropdown-item" href="{{ path('app_post') }}">Configuración</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ path('app_logout') }}">Cerrar sesión</a></li>
+                    </ul>
+                </li>
+            {% else %}
+                <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link text-bg-primary active" aria-current="page" href="{{ path('app_login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-bg-primary" href="{{ path('userRegistration') }}">Registrate</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+<!-- End bottom navbar -->

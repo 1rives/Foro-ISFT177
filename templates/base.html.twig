@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-
         {% block meta %}
             <meta charset="utf-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,29 +17,28 @@
 
         {% block stylesheets %}
             <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" type="text/css">
-            <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css">
-            <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
             <!-- <link href="{{ asset('css/animate.css') }}" rel="stylesheet" type="text/css"> -->
         {% endblock %}
 
-        {% block javascripts %}
-            <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>
-            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-        {% endblock %}
     </head>
     <body>
         {% block body %}
             {% block navbar %}
-                {% include 'general/navbar.top.html.twig' %}
-                {% include 'general/navbar.bottom.html.twig' %}
+                {% include 'general/navbar-top.html.twig' %}
+                {% include 'general/navbar-bottom.html.twig' %}
 
-                {% if show_navbar_hero is defined %}
-                    {% include 'general/hero.html.twig' %}
-                {% endif %}
+{#                {% if show_navbar_hero is defined %}#}
+{#                    {% include 'general/hero.html.twig' %}#}
+{#                {% endif %}#}
             {% endblock %}
 
 
         {% endblock %}
         {% include 'general/footer.html.twig' %}
+
+        {% block javascripts %}
+          <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+        {% endblock %}
     </body>
 </html>
