@@ -1,0 +1,5 @@
+#postImage {
+    max-width: 20vw; /* Valor dinámico; todas las imagenes con mismo tamaño máximo */
+    min-width: 10vw;
+    height: auto;
+}
