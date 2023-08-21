@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+    {% block stylesheets %}
+        {{ parent() }}
+
+        <link href="{{ asset('css/login.css') }}" rel="stylesheet" type="text/css">
+    {% endblock %}
+
+    {% block title %}
+        Iniciar sesión
+    {% endblock %}
+
+    {% block body %}
+    <body class="d-flex align-items-center py-4 bg-body-tertiary text-center">
+
+    {% block content %}
+        <main class="form-signin bg-body border shadow-sm rounded-3 w-100 m-auto p-4">
+            <img class="mb-4" src="{{ asset("uploads/files/post.jpg") }}" alt="" width="62" height="62">
+            <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+            {% block login_form %}
+
+            {% endblock %}
+        </main>
+        {% endblock %}
+
+        {% block footer %}
+            {% include ('general/footer.html.twig') %}
+        {% endblock %}
+
+        </body>
+
+    {% endblock %}
