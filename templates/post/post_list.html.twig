@@ -4,7 +4,8 @@
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
         <div class="card mb-4">
             {{ form_start(postForm) }}
-            <div class="">
+            <div class="row p-3">
+                {{ form_errors(postForm) }}
                 <div class="col-md-6 my-2">
                     {{ form_widget(postForm.title, {attr:{'placeholder':'Titulo', 'class':'form-control'}}) }}
                 </div>
@@ -18,7 +19,7 @@
                     {{ form_widget(postForm.file, {attr:{'class':'form-control'}}) }}
                     {# {{ form_widget(form.Guardar, {attr:{'class':'my-2 btn btn-success', 'value':'Guardar'}}) }}#}
                 </div>
-                <div class="col-md-12 mt-3 mb-0">
+                <div class="col-md-12 mt-3">
                     {{ form_end(postForm) }}
                 </div>
             </div>

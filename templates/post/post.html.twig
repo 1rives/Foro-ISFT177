@@ -1,34 +1,26 @@
 <!-- Start Post Section -->
-<div class="shadow-sm bg-body-tertiary rounded">
+<article class="pb-mb-3 pb-2">
+    <h2 class="modal-title">{{ post.title | capitalize }}</h2>
+    <p class="text-muted">{{ post.creationdate | date }} by <a href="#">{{ post.user.email }}</a></p>
 
-    {% include 'general/breadcrumb.html.twig' %}
+    {% if post.file is not null %}
+        <!-- Start Post Image -->
+        <img id="postImage" src="{{ asset("uploads/files/#{post.file}") }}" alt="Imagen del post"
+             class="mx-auto d-flex pb-3 pb-mb-2"
+             data-bs-toggle="modal" data-bs-target="#imageModal">
+        <!-- End Post Image -->
 
-    <div class="post-main bg-body-tertiary rounded mx-md-4 mx-3 my-md-3 my-2">
-        <article class="post-post pb-lg-4 pb-3">
-            <h2 class="post-post-title">{{ post.title | capitalize }}</h2>
-            <p class="post-post-meta">{{ post.creationdate | date }} by <a href="#">{{ post.user.email }}</a></p>
-
-            {% if post.file is not null %}
-                <!-- Start Post Image -->
-                <img id="postImage" src="{{ asset("uploads/files/#{post.file}") }}" alt="Imágen del post"
-                     class="mx-auto d-flex pb-3 pb-mb-2"
-                     data-bs-toggle="modal" data-bs-target="#imageModal">
-                <!-- End Post Image -->
-
-                <!-- Start Image Modal -->
-                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <img id="PostImageModal" src="{{ asset("uploads/files/#{post.file}") }}" alt="">
-                        </div>
-                    </div>
+        <!-- Start Image Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <img id="PostImageModal" src="{{ asset("uploads/files/#{post.file}") }}" alt="">
                 </div>
-                <!-- End Image Modal-->
-            {% endif %}
+            </div>
+        </div>
+        <!-- End Image Modal-->
+    {% endif %}
 
-            {{ post.description }}
-        </article>
-
-    </div>
-</div>
+    <p>{{ post.description }}</p>
+</article>
 <!-- End Post Section -->

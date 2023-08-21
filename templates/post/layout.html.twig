@@ -17,22 +17,29 @@
                     {% include 'general/navbar_bottom.html.twig' %}
                 {% endblock %}
 
-                <div class="row mt-5 ms-0">
+                <div class="row mt-5 ms-md-0">
 
                     {% block post_container %}
-                        <div class="col-8 bg-body-tertiary rounded px-0 mb-md-3 mb-2">
-                            {% block breadcrumb %}
-                                {% include 'general/breadcrumb.html.twig' %}
-                            {% endblock %}
+                        <div class="col-md-8">
+                            <div class="row bg-body-tertiary rounded px-0 mb-md-3 mb-2">
+                                {% block breadcrumb %}
+                                    {% include 'general/breadcrumb.html.twig' %}
+                                {% endblock %}
 
-                            {% block post_content %}
-                                {# Contenido de posts y post-details #}
+                                {% block post_content %}
+                                    {# Contenido de posts y post-details #}
+                                {% endblock %}
+                            </div>
+
+                            {% block post_comment_section %}
+                                {# Utilizado en post_details #}
                             {% endblock %}
                         </div>
+
                     {% endblock %}
 
                     {% block sidebar_container %}
-                        <div class="col-4 d-md-block d-none">
+                        <div class="col-md-4 d-md-block d-none">
                             {% block sidebar %}
                                 {% include 'general/sidebar.html.twig' %}
                             {% endblock %}

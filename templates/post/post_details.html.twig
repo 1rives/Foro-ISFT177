@@ -1,31 +1,32 @@
-{#{% extends 'post/layout.html.twig' %}#}
+{% extends 'post/layout.html.twig' %}
 
-{#{% block stylesheets %}#}
-{#    {{ parent() }}#}
+{% block stylesheets %}
+    {{ parent() }}
 
-{#    <link href="{{ asset('css/post.css') }}" rel="stylesheet" type="text/css">#}
-{#{% endblock %}#}
+    <link href="{{ asset('css/post.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
 
-{#{% block content %}#}
+{% block post_content %}
 
-{# Me traigo el block body de base.html.twig #}
-{#{{ parent() }}#}
+    {# Me traigo el block body de base.html.twig#}
+    {{ parent() }}
 
-{#    <div class="container-lg">#}
-{#        <div class="row mt-5">#}
-{#            <div class="col-sm">#}
+    <div class="container-lg">
+        <div class="row mt-4 mx-2">
+            <div class="col-sm">
+                {% include 'post/post.html.twig' with {post: post} %}
+            </div>
+        </div>
+    </div>
 
-{#                {% include 'post/post.html.twig' with {post: post} %}#}
+{% endblock %}
 
-{#                {% include 'post/comment-input.html.twig' %}#}
+{% block post_comment_section %}
 
+    <div class="mt-md-4 mt-3 mb-md-5 mb-4">
+        {% include 'post/post_comment-input.html.twig' %}
 
-{#            </div>#}
-{#            <div class="col-sm-4 d-md-flex d-sm-none">#}
-{#                {% include 'post/sidebar.html.twig' %}#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
+        {% include 'post/post_comments.html.twig' %}
+    </div>
 
-
-{#{% endblock %}#}
+{% endblock %}
