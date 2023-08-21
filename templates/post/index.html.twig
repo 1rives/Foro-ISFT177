@@ -1,10 +1,4 @@
-{% extends 'base.html.twig' %}
-
-{% set show_navbar_hero = true %}
-
-{% block title %} {{ parent() }} {% endblock %}
-
-{% block body %}
+{% extends 'post/layout.html.twig' %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -12,39 +6,6 @@
     <link href="{{ asset('css/posts.css') }}" rel="stylesheet" type="text/css">
 {% endblock %}
 
-{# Me traigo el block body de base.html.twig #}
-{{ parent() }}
-
-<div class="container-lg">
-    <div class="shadow bg-body-tertiary rounded p-3 pt-2 mt-5 mb-5">
-
-        {#            <div class="d-flex justify-content-center">#}
-        {#                <div class="spinner-border ms-3 mb-3" id="loading-spinner" role="status">#}
-        {#                    <span class="visually-hidden">Loading...</span>#}
-        {#                </div>#}
-        {#            </div>#}
-
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb p-3 bg-body-tertiary rounded-3">
-                <li class="breadcrumb-item">
-                    <a class="link-body-emphasis" href="{{ path('app_post') }}">
-                        <img {{ asset('icons/house-fill.svg') }}" alt="Inicio" width="16" height="16">
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a class="link-body-emphasis fw-semibold text-decoration-none" href="#">Posts</a>
-                </li>
-            </ol>
-        </nav>
-
-        <div class="row g-5">
-
-            {% include 'post/posts.html.twig' with { posts: posts } %}
-
-            {% include 'post/sidebar.html.twig' %}
-
-        </div>
-
-    </div>
-</div>
+{% block post_content %}
+    {% include 'post/post_list.html.twig' %}
 {% endblock %}

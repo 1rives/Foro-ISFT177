@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+    {% block stylesheets %}
+        {{ parent() }}
+
+        <link href="{{ asset('css/posts.css') }}" rel="stylesheet" type="text/css">
+    {% endblock %}
+
+    {% block body %}
+        <body class="bg-body-secondary">
+
+        {% block content %}
+            <div class="container-lg">
+
+                {% block navbar %}
+                    {% include 'general/navbar_top.html.twig' %}
+                    {% include 'general/navbar_bottom.html.twig' %}
+                {% endblock %}
+
+                <div class="row mt-5 ms-0">
+
+                    {% block post_container %}
+                        <div class="col-8 bg-body-tertiary rounded px-0 mb-md-3 mb-2">
+                            {% block breadcrumb %}
+                                {% include 'general/breadcrumb.html.twig' %}
+                            {% endblock %}
+
+                            {% block post_content %}
+                                {# Contenido de posts y post-details #}
+                            {% endblock %}
+                        </div>
+                    {% endblock %}
+
+                    {% block sidebar_container %}
+                        <div class="col-4 d-md-block d-none">
+                            {% block sidebar %}
+                                {% include 'general/sidebar.html.twig' %}
+                            {% endblock %}
+                        </div>
+                    {% endblock %}
+
+                </div>
+            </div>
+        {% endblock %}
+        </body>
+    {% endblock %}
+
+{#<div class="container-lg">#}
+{#    <div class="shadow bg-body-tertiary rounded p-3 pt-2 mt-5 mb-5">#}
+
+{#        {% include 'general/breadcrumb.html.twig' %}#}
+
+{#        <div class="row g-5">#}
+{#            {% include 'post/post_list.html.twig' with { posts: posts } %}#}
+
+{#            {% include 'post/sidebar.html.twig' %}#}
+{#        </div>#}
+
+{#    </div>#}
+{#</div>#}

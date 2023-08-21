@@ -1,6 +1,10 @@
+{#      Plantilla Base      #}
+{#  - Define los contenidos base como los metadatos y los estilos básicos #}
+{# Está plantilla deberá ser extendida en cada layout.html.twig #}
 <!DOCTYPE html>
 <html>
-    <head>
+    {% block head %}
+        <head>
         {% block meta %}
             <meta charset="utf-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,30 +21,20 @@
 
         {% block stylesheets %}
             <link href="{{ asset('css/bootstrap.css') }}" rel="stylesheet" type="text/css">
-            <!-- <link href="{{ asset('css/animate.css') }}" rel="stylesheet" type="text/css"> -->
         {% endblock %}
+        </head>
+    {% endblock %}
 
-    </head>
-    <body class="bg-body-secondary">
-        {% block body %}
-            <div class="container-lg pt-xl-4 pt-md-2 pt-sm-2">
-                {% block navbar %}
-                    {% include 'general/navbar-top.html.twig' %}
-                    {% include 'general/navbar-bottom.html.twig' %}
+    {% block body %}
+        {# El contenido de la página va acá #}
+        {# mediante el uso de los templates #}
+    {% endblock %}
 
-                    {#                {% if show_navbar_hero is defined %}#}
-                    {#                    {% include 'general/hero.html.twig' %}#}
-                    {#                {% endif %}#}
-                {% endblock %}
-
-
-            </div>
-        {% endblock %}
+    {% block footer %}
         {% include 'general/footer.html.twig' %}
+    {% endblock %}
 
-        {% block javascripts %}
-{#          <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>#}
-          <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-        {% endblock %}
-    </body>
+    {% block scripts %}
+        <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    {% endblock %}
 </html>
