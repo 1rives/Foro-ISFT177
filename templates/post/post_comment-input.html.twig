@@ -8,6 +8,8 @@
                           placeholder="Ingresa tu comentario..." minlength="10" maxlength="255" required></textarea>
                 </div>
                 <div class="d-grid gap-md-2 gap-1 d-md-flex justify-content-md-end">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
                     <input type="submit" class="btn btn-primary" value="Comentar">
                     <input type="reset" class="btn btn-light btn-outline-secondary" value="Limpiar">
                 </div>

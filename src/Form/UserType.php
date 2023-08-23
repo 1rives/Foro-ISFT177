@@ -19,8 +19,8 @@ class UserType extends AbstractType
         $builder
             ->add('email', EmailType::class)
             ->add('password', PasswordType::class)
-            ->add('photo', FileType::class)
-            ->add('description', TextareaType::class)
+            ->add('photo', FileType::class, ['required' => false])
+            ->add('description', TextareaType::class, ['required' => false])
             ->add('submit', SubmitType::class)
         ;
     }

@@ -33,10 +33,17 @@ class UserController extends AbstractController
 
         if ($registration_form->isSubmitted() && $registration_form->isValid()) {
             $plainTextPassword = $registration_form->get('password')->getData();
+
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
                 $plainTextPassword
             );
+
+            // TODO: Ávatar por defecto si no se ingresa uno
+//            if(!$registration_form->get('photo')->getData())
+//            {
+//                $user->setPhoto();
+//            }
 
             $user->setPassword($hashedPassword);
             $user->setRoles(["ROLE_USER"]);
