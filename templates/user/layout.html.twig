@@ -1,7 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UserController!{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('css/register.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block title %}
+    Iniciar sesión
+{% endblock %}
 
 {% block body %}
-    {{ form(registration_form) }}
+    <body class="d-flex py-4 bg-body-tertiary">
+
+    {% block content %}
+    <main class="form-signup bg-body border shadow-sm rounded-3 m-auto p-4">
+        <div class="text-center">
+            <a href="{{ path('app_post') }}">
+                <img class="mb-4" src="{{ asset("image/isft177_logo.png") }}" alt="" width="128" height="128">
+            </a>
+        </div>
+        <h1 class="h3 mb-3 fw-normal text-center">Crear cuenta</h1>
+
+        {% block register_form %}
+
+        {% endblock %}
+    </main>
+    {% endblock %}
+
+    </body>
 {% endblock %}

@@ -51,7 +51,7 @@ class UserController extends AbstractController
             $this->em->persist($user);
             $this->em->flush();
 
-            return $this->redirectToRoute('userRegistration');
+            return $this->redirectToRoute('app_login');
         }
         return $this->render('user/index.html.twig', [
             'registration_form' => $registration_form->createView(),
