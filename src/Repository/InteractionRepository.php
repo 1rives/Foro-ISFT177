@@ -21,6 +21,21 @@ class InteractionRepository extends ServiceEntityRepository
         parent::__construct($registry, Interaction::class);
     }
 
+    /**
+     * Devuelve todos los comentarios
+     *
+     * @return float|int|mixed|string
+     */
+    public function findCommentsBy($id): mixed
+    {
+        return $this->getEntityManager()
+            ->createQuery('
+                SELECT *
+                FROM App:Interaction interaction
+            ')
+            ->getResult();
+    }
+
 //    /**
 //     * @return Interaction[] Returns an array of Interaction objects
 //     */

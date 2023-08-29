@@ -2,15 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Interaction;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
+use App\Form\InteractionType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PostController extends AbstractController
@@ -29,7 +32,7 @@ class PostController extends AbstractController
      * @throws \Exception
      */
     #[Route('/', name: 'app_post')]
-    public function index(Request $request, SluggerInterface $slugger): Response
+    public function index(Request $request, SluggerInterface $slugger, UserInterface $userInterface): Response
     {
         $post = new Post();
 
@@ -78,7 +81,40 @@ class PostController extends AbstractController
     #[Route('/post/details/{id}', name: 'postDetails')]
     public function postDetails(Post $post): Response
     {
-        return $this->render('post/post_details.html.twig', ['post' => $post]);
+        $comments = $this->em->getRepository(Interaction::class)->findAll();
+        return $this->render('post/post_details.html.twig', [
+            'post' => $post,
+            'comments' => $comments
+        ]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    #[Route('/commentPost', name: 'commentPost')]
+    public function commentPost(Request $request, UserInterface $userInterface): Response
+    {
+        $interaction = new Interaction();
+        //Recoger POST
+        $comment = $request->request->get("comment");
+        $postId = $request->request->get("post-id");
+        $post = $this->em->getRepository(Post::class)->find($postId);
+        $userId = $request->request->get("user-id");
+        $user = $this->em->getRepository(User::class)->find($userId);
+
+        if ($comment) {
+            $interaction->setComment($comment);
+            $interaction->setUser($user);
+            $interaction->setPost($post);
+
+            $this->em->persist($interaction);
+            $this->em->flush();
+            
+            return $this->redirectToRoute('app_post');
+        }
+
+        
+        
     }
 
     /**
