@@ -7,7 +7,11 @@
 
                 <div class="p-3 pb-0">
                     <h5>Comentarios</h5>
+{#                    {% if comments is null %}
+                       <h3>Se el primero en comentar</h3>
+                    {% endif %}#}
                 </div>
+                {{ dump(comments) }}
                 {% for comment in comments %}
                 <div class="d-flex flex-row p-3">
 
@@ -17,7 +21,7 @@
 
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex flex-row align-items-center">
-                                <span class="mr-2">Brian selter</span>
+                                <span class="mr-2">{{ comment.comment }}</span>
                                 <small class="c-badge">Top Comment</small>
                             </div>
                             <small>12h ago</small>
@@ -33,8 +37,6 @@
 
                         </div>
                     </div>
-
-
                 </div>
                 {% endfor %}
 

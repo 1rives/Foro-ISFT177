@@ -7,6 +7,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
 use App\Form\InteractionType;
+use App\Repository\InteractionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -81,7 +82,8 @@ class PostController extends AbstractController
     #[Route('/post/details/{id}', name: 'postDetails')]
     public function postDetails(Post $post): Response
     {
-        $comments = $this->em->getRepository(Interaction::class)->findAll();
+        $comments = $this->em->getRepository(Interaction::class)->findPostComments($post->getId());
+
         return $this->render('post/post_details.html.twig', [
             'post' => $post,
             'comments' => $comments
@@ -95,26 +97,24 @@ class PostController extends AbstractController
     public function commentPost(Request $request, UserInterface $userInterface): Response
     {
         $interaction = new Interaction();
+
         //Recoger POST
         $comment = $request->request->get("comment");
+
         $postId = $request->request->get("post-id");
         $post = $this->em->getRepository(Post::class)->find($postId);
         $userId = $request->request->get("user-id");
         $user = $this->em->getRepository(User::class)->find($userId);
 
         if ($comment) {
-            $interaction->setComment($comment);
-            $interaction->setUser($user);
-            $interaction->setPost($post);
 
-            $this->em->persist($interaction);
-            $this->em->flush();
+
+            // Redirecciona al post
+            $postRoute = $request->headers->get('referer');
             
-            return $this->redirectToRoute('app_post');
+            return $this->redirect($postRoute);
         }
 
-        
-        
     }
 
     /**

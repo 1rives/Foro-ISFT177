@@ -22,19 +22,55 @@ class InteractionRepository extends ServiceEntityRepository
     }
 
     /**
-     * Devuelve todos los comentarios
+     * Devuelve todos los comentarios de un post
      *
-     * @return float|int|mixed|string
+     * @param $postId int ID de un Post
+     * @return mixed
      */
-    public function findCommentsBy($id): mixed
+    public function findPostComments($postId): mixed
     {
         return $this->getEntityManager()
             ->createQuery('
-                SELECT *
-                FROM App:Interaction interaction
+                SELECT
+                    interaction.id,
+                    interaction.post_id,
+                    interaction.user_id,
+                    interaction.user_favorite,
+                    interaction.comment,
+                    post.id AS post_id,
+                    user.id AS user_id,
+                    user.email AS user_username,
+                    user.photo AS user_avatar
+                FROM App\Entity\Interaction interaction
+                JOIN App\Entity\Post post WITH interaction.post_id  = post_id
+                JOIN App\Entity\User user WITH interaction.user_id = user_id
+                    WHERE interaction.post_id = :postid
             ')
+            ->setParameter('postid', $postId)
             ->getResult();
     }
+
+//
+//    public function findPostComments($postId): mixed
+//    {
+//        return $this->getEntityManager()
+//            ->createQuery('
+//                SELECT
+//                    interaction.id
+//                    interaction.user_favorite
+//                    interaction.comment
+//                    post.id AS post_id
+//                    user.id AS user_id
+//                    user.email AS user_username
+//                    user.photo AS user_avatar
+//                FROM App\Entity\Interaction interaction
+//                JOIN App\Entity\Post post WITH interaction.post_id = post.id
+//                JOIN App\Entity\User user WITH interaction.user_id = user.id
+//                    WHERE interaction.post_id = :postid
+//            ')
+//            ->setParameter('postid', $postId)
+//            ->getResult();
+//    }
 
 //    /**
 //     * @return Interaction[] Returns an array of Interaction objects
