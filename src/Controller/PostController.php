@@ -10,6 +10,7 @@ use App\Form\InteractionType;
 use App\Repository\InteractionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -108,7 +109,13 @@ class PostController extends AbstractController
 
         if ($comment) {
 
+            $interaction->setComment($comment);
+            $interaction->setUser($user);
+            $interaction->setPost($post);
 
+            $this->em->persist($interaction);
+            $this->em->flush();
+            
             // Redirecciona al post
             $postRoute = $request->headers->get('referer');
             

@@ -31,22 +31,16 @@ class InteractionRepository extends ServiceEntityRepository
     {
         return $this->getEntityManager()
             ->createQuery('
-                SELECT
-                    interaction.id,
-                    interaction.post_id,
-                    interaction.user_id,
-                    interaction.user_favorite,
-                    interaction.comment,
-                    post.id AS post_id,
-                    user.id AS user_id,
-                    user.email AS user_username,
-                    user.photo AS user_avatar
-                FROM App\Entity\Interaction interaction
-                JOIN App\Entity\Post post WITH interaction.post_id  = post_id
-                JOIN App\Entity\User user WITH interaction.user_id = user_id
-                    WHERE interaction.post_id = :postid
+                SELECT 
+                interaction.id,
+                interaction.comment,
+                user.id AS user_id,
+                user.email AS user_email
+                FROM App:Interaction interaction
+                JOIN interaction.post post
+                JOIN interaction.user user
+                WHERE post.id = '.$postId.'
             ')
-            ->setParameter('postid', $postId)
             ->getResult();
     }
 
