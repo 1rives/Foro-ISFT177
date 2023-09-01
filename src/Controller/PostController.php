@@ -9,6 +9,9 @@ use App\Form\PostType;
 use App\Form\InteractionType;
 use App\Repository\InteractionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,14 +37,18 @@ class PostController extends AbstractController
      * @throws \Exception
      */
     #[Route('/', name: 'app_post')]
-    public function index(Request $request, SluggerInterface $slugger, UserInterface $userInterface): Response
+    public function index(Request $request, SluggerInterface $slugger, PaginatorInterface $paginator): Response
     {
         $post = new Post();
+
+        // Traigo los posts e inicializo paginación
+        $query = $this->em->getRepository(Post::class)->findAllPosts();
+        $pagination = $this->getPagination($paginator, $query, $request);
 
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
-        $posts = $this->em->getRepository(Post::class)->findAllPosts();
+
 
         if($form->isSubmitted() && $form->isValid()) {
             // Trae el archivo del post
@@ -69,7 +76,7 @@ class PostController extends AbstractController
 
         return $this->render('post/index.html.twig', [
             'postForm' => $form->createView(),
-            'posts' => $posts
+            'posts' => $pagination
         ]);
     }
 
@@ -122,6 +129,25 @@ class PostController extends AbstractController
             return $this->redirect($postRoute);
         }
 
+        return $this->redirect('app_post');
+    }
+
+
+    /**
+     * Inicializa la páginación de los Posts.
+     *
+     * @param PaginatorInterface $paginator     Interfáz del paginador Knp
+     * @param Query $query                      Query que contiene los Posts
+     * @param Request $request                  Interfáz del Request
+     * @return PaginationInterface              Inicialización de la paginación
+     */
+    public function getPagination(PaginatorInterface $paginator,Query $query, Request $request): PaginationInterface
+    {
+        return $paginator->paginate(
+            $query, /* Se usa la query ya que result trae TODOS los Posts */
+            $request->query->getInt('page', 1), /* Página por default */
+            2 /* Límite de Post por página */
+        );
     }
 
     /**

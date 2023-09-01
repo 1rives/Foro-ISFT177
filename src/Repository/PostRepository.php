@@ -42,8 +42,7 @@ class PostRepository extends ServiceEntityRepository
                 FROM App:Post post
                     JOIN post.user user
                 ORDER BY post.id DESC
-            ')
-            ->getResult();
+            ');
     }
 
 
