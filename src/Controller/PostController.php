@@ -10,6 +10,7 @@ use App\Form\InteractionType;
 use App\Repository\InteractionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
+use Error;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -99,10 +100,11 @@ class PostController extends AbstractController
     }
 
     /**
+     * Función para comentar los posts
      * @throws \Exception
      */
     #[Route('/commentPost', name: 'commentPost')]
-    public function commentPost(Request $request, UserInterface $userInterface): Response
+    public function commentPost(Request $request): Response
     {
         $interaction = new Interaction();
 
@@ -130,6 +132,26 @@ class PostController extends AbstractController
         }
 
         return $this->redirect('app_post');
+    }
+
+     /**
+      * me gusta 
+     * @throws \Exception
+     */
+    #[Route('/likes', name: 'likes', options: ['expose' => true])]
+    public function Like(Request $request, UserInterface $userInterface) {
+        if($request->isXmlHttpRequest()){
+            $currentUserID = $userInterface->getUserIdentifier();
+            $id = $request->request->get('id');
+            $post = $this->em->getRepository(Post::class)->find($id);
+            $likes = $post->getLikes();
+            $likes .= $currentUserID .',';
+            $post->setLikes($likes);
+            $this->em->flush();
+            return new JsonResponse(['likes' => $likes]);
+        }else {
+            throw new \Exception('Error');
+        }
     }
 
 
@@ -203,6 +225,8 @@ class PostController extends AbstractController
 
         $post->setFile($newFilename);
     }
+
+
 
     /**
      * Inserta un nuevo post en la base de datos

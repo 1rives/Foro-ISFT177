@@ -38,7 +38,13 @@
         {% include 'general/footer.html.twig' %}
     {% endblock %}
 
+
+    {# TODO : mover los 1eros 3 scripts a la página de posts #}
     {% block scripts %}
+        <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+        <script src="{{ asset('js/ajax-call.js') }}"></script>
         <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ asset('js/jquery-3.7.0.min.js') }}"></script>
     {% endblock %}
 </html>

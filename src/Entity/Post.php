@@ -47,6 +47,9 @@ class Post
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: Interaction::class, orphanRemoval: true)]
     private Collection $interactions;
 
+    #[ORM\Column(nullable: true)]
+    private ?string $likes = null;
+
     public function __construct($title = null, $type = null, $description = null, $file = null, $url = null)
     {
         //$this->user = $user;
@@ -175,6 +178,18 @@ class Post
                 $interaction->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLikes(): ?string
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(?string $likes): static
+    {
+        $this->likes = $likes;
 
         return $this;
     }

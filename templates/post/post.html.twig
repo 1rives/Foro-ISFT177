@@ -1,7 +1,16 @@
 <!-- Start Post Section -->
+{% set PostLikes = post.likes | split(',') %}
 <article class="pb-mb-3 pb-2">
     <h2 class="modal-title">{{ post.title | capitalize }}</h2>
     <p class="text-muted">{{ post.creationdate | date }} by <a href="#">{{ post.user.email }}</a></p>
+    <div class="my-3" style="..." onclick="meGusta({{ post.id }})" >
+        <i class="fa fa-thumbs-up"></i><strong></strong>
+        {% if app.user.id in PostLikes %}
+            Te Gustó
+        {% else %}
+            Dar me Gusta
+        {% endif %}
+    </div>
 
     {% if post.file is not null %}
         <!-- Start Post Image -->
@@ -24,3 +33,4 @@
     <p>{{ post.description }}</p>
 </article>
 <!-- End Post Section -->
+
