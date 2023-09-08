@@ -12,10 +12,13 @@
                     {% endif %}#}
                 </div>
                 {% for comment in comments %}
+
                 <div class="d-flex flex-row p-3">
-
-                    <img src="{{ asset("uploads/files/#{post.file}") }}" width="40" height="40" class="rounded-circle mr-3">
-
+                    {% if comment.user_avatar == NULL %}
+                        <img src="{{ asset('image/default_avatar.png') }}" width="40" height="40" class="rounded-circle mr-3">
+                    {% else %}
+                        <img src="{{ asset("uploads/files/#{comment.user_avatar}") }}" width="40" height="40" class="rounded-circle mr-3">
+                    {% endif %}
                     <div class="w-100">
                         <small>{{ 'now'|date('d/m/Y') }}</small>
                         <div class="d-flex justify-content-between align-items-center">

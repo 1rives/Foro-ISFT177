@@ -2,36 +2,55 @@
 
 namespace App\Controller;
 
+use App\Entity\Post;
 use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
+
 
 class UserController extends AbstractController
 {
 
-    private $em;
+    /**
+     * @var EntityManagerInterface
+     */
+    private EntityManagerInterface $em;
 
     /**
-     * @param $em
+     * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
 
-    #[Route('/registration', name: 'userRegistration')]
-    public function userRegistration(Request $request, UserPasswordHasherInterface $passwordHasher): Response
+    /**
+     * Crea el formulario para el registro del usuario despues de realizar
+     * la verificación mediante el DNI del usuario.
+     *
+     * @param Request $request
+     * @param UserPasswordHasherInterface $passwordHasher
+     * @return Response
+     * @throws \Exception
+     */
+    #[Route('/registration', name: 'register')]
+    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, SluggerInterface $slugger): Response
     {
         $user = new User();
         $registration_form = $this->createForm(UserType::class, $user);
         $registration_form->handleRequest($request);
 
         if ($registration_form->isSubmitted() && $registration_form->isValid()) {
+
+            // Encripto contraseña
             $plainTextPassword = $registration_form->get('password')->getData();
 
             $hashedPassword = $passwordHasher->hashPassword(
@@ -39,11 +58,19 @@ class UserController extends AbstractController
                 $plainTextPassword
             );
 
-            // TODO: Ávatar por defecto si no se ingresa uno
-//            if(!$registration_form->get('photo')->getData())
-//            {
-//                $user->setPhoto();
-//            }
+            $avatar = $registration_form->get('photo')->getData();
+
+            if(!$avatar) {
+                $user->setPhoto(NULL);
+            } else {
+                $newAvatarFilename = $this->convertFilenameToSafe($avatar, $slugger);
+
+                $pathParameter = $this->getParameter('files_directory');
+                $this->moveFileToDirectory($avatar, $newAvatarFilename, $pathParameter);
+
+                $user->setPhoto($newAvatarFilename);
+            }
+
 
             $user->setPassword($hashedPassword);
             $user->setRoles(["ROLE_USER"]);
@@ -57,4 +84,45 @@ class UserController extends AbstractController
             'registration_form' => $registration_form->createView(),
         ]);
     }
+
+    /**
+     * Mueve la imagen al directorio deseado
+     *
+     * La ubicaición del directorio de imágenes se encuentra
+     * definido como parámetro en services.yaml
+     *
+     * @param mixed $file Archivo
+     * @param string $newFilename Nombre de archivo formateado
+     * @param string $pathParameter Directorio donde se guardará la imagen
+     * @return void
+     * @throws \Exception
+     */
+    protected function moveFileToDirectory(mixed $file, string $newFilename, string $pathParameter): void
+    {
+        try {
+            $file->move(
+                $pathParameter,
+                $newFilename
+            );
+        } catch (FileException $e) {
+            throw new \Exception('Ha habido un problema con su archivo');
+        }
+    }
+
+    /**
+     * Sanitiza el nombre actual del archivo por cuestiónes
+     * de seguridad
+     *
+     * @param mixed $file
+     * @param SluggerInterface $slugger Interface de Slugger
+     * @return string
+     */
+    private function convertFilenameToSafe(mixed $file, SluggerInterface $slugger): string
+    {
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeFilename = $slugger->slug($originalFilename);
+
+        return $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+    }
+
 }

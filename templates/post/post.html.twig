@@ -5,10 +5,12 @@
     <p class="text-muted">{{ post.creationdate | date }} by <a href="#">{{ post.user.email }}</a></p>
     <div class="my-3" style="..." onclick="meGusta({{ post.id }})" >
         <i class="fa fa-thumbs-up"></i><strong></strong>
-        {% if app.user.id in PostLikes %}
-            Te Gustó
-        {% else %}
-            Dar me Gusta
+        {% if app.user.id is defined %}
+            {% if app.user.id in PostLikes %}
+                Te Gustó
+            {% else %}
+                Dar me Gusta
+            {% endif %}
         {% endif %}
     </div>
 

@@ -35,7 +35,8 @@ class InteractionRepository extends ServiceEntityRepository
                 interaction.id,
                 interaction.comment,
                 user.id AS user_id,
-                user.email AS user_email
+                user.email AS user_email,
+                user.photo AS user_avatar
                 FROM App:Interaction interaction
                 JOIN interaction.post post
                 JOIN interaction.user user

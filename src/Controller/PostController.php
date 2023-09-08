@@ -9,6 +9,7 @@ use App\Form\PostType;
 use App\Form\InteractionType;
 use App\Repository\InteractionRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Query;
 use Error;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -57,7 +58,9 @@ class PostController extends AbstractController
 
             if($file) {
                 $newFilename = $this->convertFilenameToSafe($file, $slugger);
-                $this->moveFileToDirectory($file, $newFilename, $post);
+                $pathParameter = $this->getParameter('files_directory'); // Ubicación de directorio
+                $this->moveFileToDirectory($file, $newFilename, $pathParameter);
+                $post->setFile($newFilename);
             }
 
             // Crea el URL mediante el título
@@ -201,29 +204,27 @@ class PostController extends AbstractController
     }
 
     /**
-     * Mueve la imagen al directorio de imagenes
+     * Mueve la imagen al directorio deseado
      *
      * La ubicaición del directorio de imágenes se encuentra
      * definido como parámetro en services.yaml
      *
      * @param mixed $file Archivo
      * @param string $newFilename Nombre de archivo formateado
-     * @param Post $post Entidad de Post
+     * @param string $pathParameter Directorio donde se guardará la imagen
      * @return void
      * @throws \Exception
      */
-    private function moveFileToDirectory(mixed $file, string $newFilename, Post $post): void
+    protected function moveFileToDirectory(mixed $file, string $newFilename, string $pathParameter): void
     {
         try {
             $file->move(
-                $this->getParameter('files_directory'),
+                $pathParameter,
                 $newFilename
             );
         } catch (FileException $e) {
             throw new \Exception('Ha habido un problema con su archivo');
         }
-
-        $post->setFile($newFilename);
     }
 
 
