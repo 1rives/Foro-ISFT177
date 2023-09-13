@@ -1,0 +1,40 @@
+/*
+ * Archivo utilizado para la lista de Posts
+ *
+ * post_list.html.twig
+ */
+
+/**
+* Formulario - Descripción del post
+*
+* Configuro para que el textarea se expande de manera vertical
+* con un límite de altura.
+*
+* ID creada por Symfony.
+*/
+#post_description {
+    max-height: 200px;
+    min-height: 62px;
+    resize: vertical;
+}
+
+/**
+* Contenido del Post
+*
+* Pequeño padding para ajustar la distancia entre Posts
+*/
+.post-list__content {
+    margin-bottom: 0.5rem;
+}
+
+/**
+* Imagen del Post
+*
+* Mediante la unidad vw, hacemos que la imagen tenga siempre el mismo tamaño.
+*/
+#post-list__image {
+    max-width: 25vw;
+
+    width: fit-content;
+    height: auto;
+}

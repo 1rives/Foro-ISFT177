@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +40,7 @@ class UserController extends AbstractController
      * @param Request $request
      * @param UserPasswordHasherInterface $passwordHasher
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route('/registration', name: 'register')]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher, SluggerInterface $slugger): Response
@@ -58,6 +59,7 @@ class UserController extends AbstractController
                 $plainTextPassword
             );
 
+            // Avatar del usuario
             $avatar = $registration_form->get('photo')->getData();
 
             if(!$avatar) {
@@ -95,7 +97,7 @@ class UserController extends AbstractController
      * @param string $newFilename Nombre de archivo formateado
      * @param string $pathParameter Directorio donde se guardará la imagen
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     protected function moveFileToDirectory(mixed $file, string $newFilename, string $pathParameter): void
     {
@@ -105,7 +107,7 @@ class UserController extends AbstractController
                 $newFilename
             );
         } catch (FileException $e) {
-            throw new \Exception('Ha habido un problema con su archivo');
+            throw new Exception('Ha habido un problema con su archivo');
         }
     }
 

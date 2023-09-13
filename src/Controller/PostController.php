@@ -171,7 +171,7 @@ class PostController extends AbstractController
         return $paginator->paginate(
             $query, /* Se usa la query ya que result trae TODOS los Posts */
             $request->query->getInt('page', 1), /* Página por default */
-            2 /* Límite de Post por página */
+            6 /* Límite de Post por página */
         );
     }
 

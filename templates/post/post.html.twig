@@ -7,16 +7,20 @@
         <i class="fa fa-thumbs-up"></i><strong></strong>
         {% if app.user.id is defined %}
             {% if app.user.id in PostLikes %}
-                Te Gustó
+                {{ PostLikes | length - 1 }} likes - Sacar like
             {% else %}
-                Dar me Gusta
+                {% if PostLikes | length - 1 == 0 %}
+                    No hay likes - Dar like
+                {% else %}
+                    {{ PostLikes | length - 1 }} likes - Dar like
+                {% endif %}
             {% endif %}
         {% endif %}
     </div>
 
     {% if post.file is not null %}
         <!-- Start Post Image -->
-        <img id="postImage" src="{{ asset("uploads/files/#{post.file}") }}" alt="Imagen del post"
+        <img id="post__image" src="{{ asset("uploads/files/#{post.file}") }}" alt="Imagen del post"
              class="mx-auto d-flex pb-3 pb-mb-2"
              data-bs-toggle="modal" data-bs-target="#imageModal">
         <!-- End Post Image -->
@@ -25,7 +29,7 @@
         <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <img id="PostImageModal" src="{{ asset("uploads/files/#{post.file}") }}" alt="">
+                    <img id="post__image-modal" src="{{ asset("uploads/files/#{post.file}") }}" alt="">
                 </div>
             </div>
         </div>

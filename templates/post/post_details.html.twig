@@ -12,7 +12,7 @@
     {{ parent() }}
 
     <div class="container-lg">
-        <div class="row mt-4 mx-2">
+        <div class="row mt-2 mx-2">
             <div class="col-sm">
                 {% include 'post/post.html.twig' with {post: post} %}
             </div>
@@ -23,10 +23,93 @@
 
 {% block post_comment_section %}
 
-    <div class="mt-md-4 mt-3 mb-md-5 mb-4">
-        {% include 'post/post_comment-input.html.twig' %}
+    <div class="mt-md-4 mb-md-5 mt-3 mb-4">
+        <!-- Start Post Comment Input -->
+        <div class="row">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <!-- Start Post Comment Form -->
+                <div class="rounded form-control p-3">
 
-        {% include 'post/post_comments.html.twig' %}
+                    <form action="{{ path('commentPost') }}" method="POST">
+                        <div class="d-flex mb-3">
+
+                            {% if app.user.photo == NULL %}
+                                <img src="{{ asset('image/default_avatar.png') }}" class="post-comment__avatar d-flex flex-row rounded-circle mr-3 me-2">
+                            {% else %}
+                                <img src="{{ asset("uploads/files/#{comment.user_avatar}") }}" class="post-comment__avatar d-flex flex-row rounded-circle mr-3">
+                            {% endif %}
+
+                            <textarea class="d-flex flex-row form-control" id="post-comment__textarea" rows="3"
+                            placeholder="Ingresa tu comentario..." minlength="10" maxlength="255" required></textarea>
+                        </div>
+
+                        <div class="d-grid gap-md-2 gap-1 d-md-flex justify-content-md-end">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                            <input type="hidden" name="post-id" value={{ post.id }}>
+                            <input type="hidden" name="user-id" value={{ app.user.id }}>
+
+                            <input type="submit" class="btn btn-primary" value="Comentar">
+                            <input type="reset" class="btn btn-light btn-outline-secondary" value="Limpiar">
+                        </div>
+                    </form>
+                </div>
+                <!-- End Post Comment Form -->
+            {% else %}
+                <div class="alert alert-light mb-0">
+                    Para comentar, por favor
+                    <a href="{{ path('register') }}">Registrate</a> o
+                    <a href="{{ path('app_login') }}">inicia sesión</a>
+                </div>
+            {% endif %}
+        </div>
+        <!-- End Post Comment Input -->
+
+        <!-- Start Post Comment Section -->
+        <div class="row pt-md-2 pt-1">
+            <div class="justify-content-center align-items-center">
+
+                <div class="pb-1 pt-2">
+                    {% if comments == null %}
+                        <h4 class="text-center">Se el primero en comentar</h4>
+                    {% else %}
+                        <h5 class>Comentarios ({{ comments | length }})</h5>
+                    {% endif %}
+
+                </div>
+
+                <div class="row bg-body border border-1 rounded mt-2 p-1">
+                    {% for comment in comments %}
+                        <!-- Start Post Comment -->
+                        <div class="d-flex flex-row p-3">
+                            {% if comment.user_avatar == NULL %}
+                                <img src="{{ asset('image/default_avatar.png') }}" class="post-comment__avatar rounded-circle mr-3 me-3">
+                            {% else %}
+                                <img src="{{ asset("uploads/files/#{comment.user_avatar}") }}" class="post-comment__avatar rounded-circle mr-3 me-3">
+                            {% endif %}
+
+                            <div class="w-100">
+                                <div class="d-flex align-items-center pb-1">
+
+                                    <div class="d-flex flex-row align-items-center justify-content-center pe-2">
+                                        <a class="text-decoration-none text-dark fw-medium" href="#">
+                                            <span class="fs-5 mr-2">Nombre Apellido</span>
+                                        </a>
+                                    </div>
+
+                                    <small class="text-muted">🕓 {{ 'now'|date('d/m/Y') }}</small>
+                                </div>
+
+                                <p class="d-flex flex-row text-justify text-break comment-text mb-0">{{ comment.comment }}</p>
+                            </div>
+
+                        </div>
+                        <!-- End Post Comment -->
+                    {% endfor %}
+                </div>
+
+
+            </div>
+        </div>
+        <!-- End Post Comment Section -->
     </div>
-
 {% endblock %}
