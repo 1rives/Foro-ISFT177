@@ -42,6 +42,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Interaction::class, orphanRemoval: true)]
     private Collection $interactions;
 
+    #[ORM\Column(length: 255)]
+    private ?string $first_name = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $last_name = null;
+
+    #[ORM\Column]
+    private ?int $dni = null;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $account_status = null;
+
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Career $career = null;
+
     public function __construct($id = null, $email = null, $password = null, $photo = null, $description = null)
     {
         $this->id = $id;
@@ -206,4 +222,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getFirstName(): ?string
+    {
+        return $this->first_name;
+    }
+
+    public function setFirstName(string $first_name): static
+    {
+        $this->first_name = $first_name;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->last_name;
+    }
+
+    public function setLastName(string $last_name): static
+    {
+        $this->last_name = $last_name;
+
+        return $this;
+    }
+
+    public function getDni(): ?int
+    {
+        return $this->dni;
+    }
+
+    public function setDni(int $dni): static
+    {
+        $this->dni = $dni;
+
+        return $this;
+    }
+
+    public function getAccountStatus(): ?int
+    {
+        return $this->account_status;
+    }
+
+    public function setAccountStatus(int $account_status): static
+    {
+        $this->account_status = $account_status;
+
+        return $this;
+    }
+
+    public function getCareer(): ?Career
+    {
+        return $this->career;
+    }
+
+    public function setCareer(?Career $career): static
+    {
+        $this->career = $career;
+
+        return $this;
+    }
+    
 }
