@@ -7,17 +7,16 @@
             <div class="row p-3">
                 {{ form_errors(postForm) }}
                 <div class="col-md-6 my-2">
-                    {{ form_widget(postForm.title, {attr:{'placeholder':'Titulo', 'class':'form-control'}}) }}
+                    {{ form_widget(postForm.title, {attr:{'placeholder':'Titulo'}}) }}
                 </div>
                 <div class="col-md-6 my-2">
-                    {{ form_widget(postForm.type, {attr:{'class':'form-control'}}) }}
+                    {{ form_widget(postForm.type) }}
                 </div>
                 <div class="col-md-12 my-2">
-                    {{ form_widget(postForm.description, {attr:{'class':'form-control', 'placeholder': '¿Qué quieres contar?'}}) }}
+                    {{ form_widget(postForm.description, {attr:{'placeholder': '¿Qué quieres contar?'}}) }}
                 </div>
                 <div class="col-md-12 text-center">
-                    {{ form_widget(postForm.file, {attr:{'class':'form-control'}}) }}
-                    {# {{ form_widget(form.Guardar, {attr:{'class':'my-2 btn btn-success', 'value':'Guardar'}}) }}#}
+                    {{ form_widget(postForm.file) }}
                 </div>
                 <div class="col-md-12 mt-3">
                     {{ form_end(postForm) }}
@@ -25,7 +24,7 @@
             </div>
         </div>
     {% else %}
-        <div class="alert alert-warning mb-4 border-dark-subtle">
+        <div class="alert alert-light mb-4">
             Si deseas publicar, por favor
             <a href="{{ path('register') }}">Registrate</a> o
             <a href="{{ path('app_login') }}">inicia sesión</a>
@@ -33,14 +32,14 @@
     {% endif %}
 
     {% for post in posts %}
-        <article class="post-post pe-auto pb-3 ps-0">
+        <article class="post-list__content pe-auto pb-3 ps-0">
             <div class="container-fluid rounded border shadow-sm pt-xl-4 pt-3">
                 <div class="row align-items-start">
 
                     {% if post.file %}
                         <div class="col-3">
                             <a href="{{ path('postDetails', {id: post.id, url: post.url}) }}">
-                                <img id="postImage" src="{{ asset("uploads/files/#{post.file}") }}"
+                                <img id="post-list__image" src="{{ asset("uploads/files/#{post.file}") }}"
                                      class="img-thumbnail img-fluid float-md-start w-100" alt="...">
                             </a>
                         </div>
@@ -55,7 +54,7 @@
 
                     </div>
                     <hr class="mt-3">
-                    <p class="b">{{ post.description }}</p>
+                    <p class="text-truncate">{{ post.description }}</p>
                 </div>
             </div>
         </article>
