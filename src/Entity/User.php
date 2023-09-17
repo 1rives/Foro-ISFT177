@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180, unique: true, nullable: true)]
     #[Assert\NotBlank]
     #[Assert\Type('string')]
     #[Assert\Email]
@@ -49,10 +49,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 //        min: 8,
 //        max: 25
 //    )]
-    #[Assert\NoSuspiciousCharacters]
-    #[Assert\PasswordStrength(
-        message: 'Debe contener al menos un número y una mayúscula.'
-    )]
+    //#[Assert\NoSuspiciousCharacters]
+    //#[Assert\PasswordStrength(
+    //    message: 'Debe contener al menos un número y una mayúscula.'
+    //)]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -101,11 +101,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::SMALLINT)]
     #[Assert\Type('int')]
     private ?int $account_status = null;
-
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\Type(Career::class)]
-    private ?Career $career = null;
 
     public function __construct($id = null, $email = null, $password = null, $photo = null, $description = null)
     {
@@ -320,16 +315,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCareer(): ?Career
-    {
-        return $this->career;
-    }
-
-    public function setCareer(?Career $career): static
-    {
-        $this->career = $career;
-
-        return $this;
-    }
-    
 }

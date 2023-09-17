@@ -57,8 +57,9 @@ class UserController extends AbstractController
         if ($registration_form->isSubmitted() && $registration_form->isValid()) {
             $submittedDNI = $registration_form->get('dni')->getData();
             $foundUser = $this->em->getRepository(User::class)->findOneBy(array('dni' => $submittedDNI));
-
+            
             $foundUserStatus = $foundUser->getAccountStatus();
+            dd($foundUserStatus);
 
             // Para evitar el reenvio de formulario, se debe cambiar render a redirectToRoute
             // Se debe encontrar primero la manera de enviar el mensaje de error al front.
