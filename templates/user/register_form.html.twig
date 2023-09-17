@@ -1,23 +1,48 @@
 <!-- Start Register Form -->
 {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
-    <div class="text-danger">{{ form_errors(form) }}</div>
     <div class="col-md-6">
         {{ form_label(form.email) }}
         {{ form_widget(form.email) }}
+        {% if form_errors(form.email) is not null %}
+            <div class="text-danger">{{ form_errors(form.email) }}</div>
+        {% endif %}
     </div>
     <div class="col-md-6">
-        {{ form_label(form.password, 'Contraseña') }}
-        {{ form_widget(form.password) }}
+        {{ form_label(form.dni) }}
+        {{ form_widget(form.dni) }}
+        {% if form_errors(form.dni) is not null %}
+            <div class="text-danger">{{ form_errors(form.dni) }}</div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        {{ form_label(form.password.first) }}
+        {{ form_widget(form.password.first) }}
+        {% if form_errors(form.password.first) is not null %}
+            <div class="text-danger">{{ form_errors(form.password.first) }}</div>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        {{ form_label(form.password.second) }}
+        {{ form_widget(form.password.second) }}
     </div>
     <div class="col-12">
-        {{ form_label(form.photo, 'Avatar') }}
+        {{ form_label(form.photo) }}
         {{ form_widget(form.photo) }}
+        {% if form_errors(form.photo) is not null %}
+            <div class="text-danger">{{ form_errors(form.photo) }}</div>
+        {% endif %}
     </div>
     <div class="col-12">
-        {{ form_label(form.description, 'Descripción') }}
-        {{ form_widget(form.description, {'attr': {'placeholder': 'Ingrese una descripción breve'}}) }}
+        {{ form_label(form.description) }}
+        {{ form_widget(form.description, {'attr': {'placeholder': 'Ingrese una descripción breve sobre ti...'}}) }}
+        {% if form_errors(form.description) is not null %}
+            <div class="text-danger">{{ form_errors(form.description) }}</div>
+        {% endif %}
     </div>
     <div class="col-12">
+        {% if dni_error is defined %}
+            <div class="text-danger pb-3">{{ dni_error }}</div>
+        {% endif %}
         {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
     </div>
     {# If you want to control the URL the user is redirected to on success #}

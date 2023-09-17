@@ -8,6 +8,8 @@ use App\Form\UserType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
 use Exception;
+use phpDocumentor\Reflection\Type;
+use PhpParser\Error;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use function PHPUnit\Framework\isEmpty;
+use function PHPUnit\Framework\throwException;
 
 
 class UserController extends AbstractController
@@ -39,49 +43,77 @@ class UserController extends AbstractController
      *
      * @param Request $request
      * @param UserPasswordHasherInterface $passwordHasher
+     * @param SluggerInterface $slugger
      * @return Response
      * @throws Exception
      */
     #[Route('/registration', name: 'register')]
     public function register(Request $request, UserPasswordHasherInterface $passwordHasher, SluggerInterface $slugger): Response
     {
-        $user = new User();
-        $registration_form = $this->createForm(UserType::class, $user);
+        $userData = new User();
+        $registration_form = $this->createForm(UserType::class, $userData);
         $registration_form->handleRequest($request);
 
         if ($registration_form->isSubmitted() && $registration_form->isValid()) {
+            $submittedDNI = $registration_form->get('dni')->getData();
+            $foundUser = $this->em->getRepository(User::class)->findOneBy(array('dni' => $submittedDNI));
 
-            // Encripto contraseña
-            $plainTextPassword = $registration_form->get('password')->getData();
+            $foundUserStatus = $foundUser->getAccountStatus();
 
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $plainTextPassword
-            );
+            // Para evitar el reenvio de formulario, se debe cambiar render a redirectToRoute
+            // Se debe encontrar primero la manera de enviar el mensaje de error al front.
+            switch($foundUserStatus) {
+                case null:
+                    return $this->render('user/index.html.twig', [
+                        'registration_form' => $registration_form->createView(),
+                        'dni_error' => 'El DNI no está registrado, si sos alumno contactate con un administrador.'
+                    ]);
 
-            // Avatar del usuario
-            $avatar = $registration_form->get('photo')->getData();
+                case 1:
+                    // TODO: Redirigir a verificación o enviar link a correo
+                    return $this->redirectToRoute('register');
 
-            if(!$avatar) {
-                $user->setPhoto(NULL);
-            } else {
-                $newAvatarFilename = $this->convertFilenameToSafe($avatar, $slugger);
-
-                $pathParameter = $this->getParameter('files_directory');
-                $this->moveFileToDirectory($avatar, $newAvatarFilename, $pathParameter);
-
-                $user->setPhoto($newAvatarFilename);
+                case 2:
+                    return $this->render('user/index.html.twig', [
+                        'registration_form' => $registration_form->createView(),
+                        'dni_error' => 'Ya se encuentra una cuenta registrada con el DNI.'
+                    ]);
             }
 
+            // Variables a utilizar
+            $formAvatar = $registration_form->get('photo')->getData();
+            $formPassword = $registration_form->get('password')->getData();
+            $formEmail = $registration_form->get('email')->getData();
+            $formDescription = $registration_form->get('description')->getData();
+            $userRole = ["ROLE_USER"];
+            $unverifiedAccountStatus = 1;
 
-            $user->setPassword($hashedPassword);
-            $user->setRoles(["ROLE_USER"]);
+            // Avatar
+            if(!$formAvatar) {
+                $foundUser->setPhoto(NULL);
+            } else {
+                $newAvatarFilename = $this->convertFilenameToSafe($formAvatar, $slugger);
+                $pathParameter = $this->getParameter('files_directory');
+                $this->moveFileToDirectory($formAvatar, $newAvatarFilename, $pathParameter);
 
-            $this->em->persist($user);
+                $foundUser->setPhoto($newAvatarFilename);
+            }
+
+            // Contraseña
+            $hashedPassword = $passwordHasher->hashPassword($userData, $formPassword);
+            $foundUser->setPassword($hashedPassword);
+
+            $foundUser->setEmail($formEmail);
+            $foundUser->setDescription($formDescription);
+            $foundUser->setRoles($userRole);
+            $foundUser->setAccountStatus($unverifiedAccountStatus);
+
+            //$this->em->persist($user);
             $this->em->flush();
 
             return $this->redirectToRoute('app_login');
         }
+
         return $this->render('user/index.html.twig', [
             'registration_form' => $registration_form->createView(),
         ]);
@@ -126,5 +158,6 @@ class UserController extends AbstractController
 
         return $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
     }
+
 
 }

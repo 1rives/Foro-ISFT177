@@ -7,12 +7,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\File;
+use Symfony\Component\DomCrawler\Image;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity(
+    fields: 'email',
+    message: 'Este correo ya se encuentra utilizado.'
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -21,18 +29,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    #[Assert\Email]
+    #[Assert\Length(
+        min: 10,
+        max: 60
+    )]
+    #[Assert\NoSuspiciousCharacters]
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+//    #[Assert\Length(
+//        min: 8,
+//        max: 25
+//    )]
+    #[Assert\NoSuspiciousCharacters]
+    #[Assert\PasswordStrength(
+        message: 'Debe contener al menos un número y una mayúscula.'
+    )]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(
+        allowNull: true
+    )]
+    #[Assert\Type('string')]
+    #[Assert\NoSuspiciousCharacters]
     private ?string $photo = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\NotBlank(
+        allowNull: true
+    )]
+    #[Assert\Type('string')]
+    #[Assert\Length(
+        min: 0,
+        max: 255,
+    )]
+    #[Assert\NoSuspiciousCharacters]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class, orphanRemoval: true)]
@@ -48,13 +88,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $last_name = null;
 
     #[ORM\Column]
+    #[Assert\Type('int')]
+    #[Assert\Length(
+        min: 5,
+        max: 15,
+        minMessage: 'Debe contener más de {{ limit }} carácteres',
+        maxMessage: 'Debe contener menos de {{ limit }} carácteres'
+    )]
+    #[Assert\NoSuspiciousCharacters]
     private ?int $dni = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Assert\Type('int')]
     private ?int $account_status = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\Type(Career::class)]
     private ?Career $career = null;
 
     public function __construct($id = null, $email = null, $password = null, $photo = null, $description = null)
