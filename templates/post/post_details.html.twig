@@ -32,15 +32,14 @@
 
                     <form action="{{ path('commentPost') }}" method="POST">
                         <div class="d-flex mb-3">
-
                             {% if app.user.photo == NULL %}
                                 <img src="{{ asset('image/default_avatar.png') }}" class="post-comment__avatar d-flex flex-row rounded-circle mr-3 me-2">
                             {% else %}
-                                <img src="{{ asset("uploads/files/#{comment.user_avatar}") }}" class="post-comment__avatar d-flex flex-row rounded-circle mr-3">
+                                <img src="{{ asset("uploads/files/#{app.user.photo}") }}" class="post-comment__avatar d-flex flex-row rounded-circle mr-3 me-2">
                             {% endif %}
 
                             <textarea class="d-flex flex-row form-control" id="post-comment__textarea" rows="3"
-                            placeholder="Ingresa tu comentario..." minlength="10" maxlength="255" required></textarea>
+                            placeholder="Ingresa tu comentario..." name="comment" minlength="10" maxlength="255" required></textarea>
                         </div>
 
                         <div class="d-grid gap-md-2 gap-1 d-md-flex justify-content-md-end">
@@ -81,23 +80,29 @@
                 <div class="row bg-body border border-1 rounded mt-2 p-1">
                     {% for comment in comments %}
                         <!-- Start Post Comment -->
-                        <div class="d-flex flex-row p-3">
-                            {% if comment.user_avatar == NULL %}
-                                <img src="{{ asset('image/default_avatar.png') }}" class="post-comment__avatar rounded-circle mr-3 me-3">
-                            {% else %}
-                                <img src="{{ asset("uploads/files/#{comment.user_avatar}") }}" class="post-comment__avatar rounded-circle mr-3 me-3">
-                            {% endif %}
+                        <div class="d-flex flex-row p-3 my-1">
+                            <a href="#">
+                                {% if comment.user_avatar == NULL %}
+                                    <img src="{{ asset('image/default_avatar.png') }}" class="post-comment__avatar rounded-circle mr-2">
+                                {% else %}
+                                    <img src="{{ asset("uploads/files/#{comment.user_avatar}") }}" class="post-comment__avatar rounded-circle mr-2">
+                                {% endif %}
+                            </a>
 
-                            <div class="w-100">
+                            <div class="container-fluid">
                                 <div class="d-flex align-items-center pb-1">
 
-                                    <div class="d-flex flex-row align-items-center justify-content-center pe-2">
-                                        <a class="text-decoration-none text-dark fw-medium" href="#">
-                                            <span class="fs-5 mr-2">Nombre Apellido</span>
+                                    <div class="d-flex flex-row pe-2">
+                                        <a class="text-decoration-none text-dark fw-medium m-0" href="#">
+                                            <span class="mr-2">
+                                                 {{ comment.user_full_name }}
+                                            </span>
                                         </a>
                                     </div>
 
-                                    <small class="text-muted">🕓 {{ 'now'|date('d/m/Y') }}</small>
+                                    <small class="text-muted d-flex">
+                                        <img src="{{ asset('icons/clock.svg') }}" class="my-auto me-1" alt="Bootstrap" width="12" height="12">
+                                        {{ 'now'|date('d/m/Y') }}</small>
                                 </div>
 
                                 <p class="d-flex flex-row text-justify text-break comment-text mb-0">{{ comment.comment }}</p>

@@ -36,6 +36,14 @@ class PostController extends AbstractController
     }
 
     /**
+     * Trae todos los Posts disponibles con la correspondiente paginación.
+     *
+     * Además, el usuario puede crear un nuevo Post.
+     *
+     * @param Request $request
+     * @param SluggerInterface $slugger
+     * @param PaginatorInterface $paginator
+     * @return Response
      * @throws \Exception
      */
     #[Route('/', name: 'app_post')]
@@ -49,8 +57,6 @@ class PostController extends AbstractController
 
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
-
-
 
         if($form->isSubmitted() && $form->isValid()) {
             // Trae el archivo del post
@@ -74,7 +80,7 @@ class PostController extends AbstractController
 
             $this->em->persist($post);
             $this->em->flush();
-            
+
             return $this->redirectToRoute('app_post');
         }
 
@@ -95,23 +101,25 @@ class PostController extends AbstractController
     public function postDetails(Post $post): Response
     {
         $comments = $this->em->getRepository(Interaction::class)->findPostComments($post->getId());
+        $commentsWithNames = $this->addUserNameToArrayElements($comments);
 
         return $this->render('post/post_details.html.twig', [
             'post' => $post,
-            'comments' => $comments
+            'comments' => $commentsWithNames
         ]);
     }
 
     /**
      * Función para comentar los posts
-     * @throws \Exception
+     *
+     * @param Request $request
+     * @return Response
      */
     #[Route('/commentPost', name: 'commentPost')]
     public function commentPost(Request $request): Response
     {
         $interaction = new Interaction();
 
-        //Recoger POST
         $comment = $request->request->get("comment");
 
         $postId = $request->request->get("post-id");
@@ -119,37 +127,44 @@ class PostController extends AbstractController
         $userId = $request->request->get("user-id");
         $user = $this->em->getRepository(User::class)->find($userId);
 
-        if ($comment) {
+        // Creo la redirección al mismo Post
+        $postRoute = $request->headers->get('referer');
 
+        if ($comment) {
             $interaction->setComment($comment);
             $interaction->setUser($user);
             $interaction->setPost($post);
 
             $this->em->persist($interaction);
             $this->em->flush();
-            
+
             // Redirecciona al post
             $postRoute = $request->headers->get('referer');
-            
             return $this->redirect($postRoute);
         }
 
-        return $this->redirect('app_post');
+        return $this->redirect($postRoute);
     }
 
-     /**
-      * me gusta 
+    /**
+     * Dar me gusta al Post
+     *
+     * @param Request $request
+     * @param UserInterface $userInterface
+     * @return JsonResponse
      * @throws \Exception
      */
     #[Route('/likes', name: 'likes', options: ['expose' => true])]
     public function Like(Request $request, UserInterface $userInterface) {
         if($request->isXmlHttpRequest()){
             $currentUserID = $userInterface->getUserIdentifier();
+
             $id = $request->request->get('id');
             $post = $this->em->getRepository(Post::class)->find($id);
             $likes = $post->getLikes();
             $likes .= $currentUserID .',';
             $post->setLikes($likes);
+
             $this->em->flush();
             return new JsonResponse(['likes' => $likes]);
         }else {
@@ -157,6 +172,29 @@ class PostController extends AbstractController
         }
     }
 
+    /**
+     * Agrega el nombre completo del User en cada elemento del arreglo
+     * mediante una key.
+     *
+     * Si no se encuentra un nombre o apellido registrado del User, se le asignará
+     * un nombre por defecto.
+     *
+     * @param array $array      Arreglo con arreglos de usuario
+     * @return array
+     */
+    private function addUserNameToArrayElements(array $array): array {
+        return array_map(function ($arrayElement) {
+            $userId = $arrayElement['user_id'];
+            $user = $this->em->getRepository(User::class)->find($userId);
+
+            (!$user->getFirstName() || !$user->getLastName()) ?
+                $userName = "Usuario" :
+                $userName = $user->getFirstName() . " " . $user->getLastName();
+
+            $arrayElement['user_full_name'] = $userName;
+            return $arrayElement;
+        }, $array);
+    }
 
     /**
      * Inicializa la páginación de los Posts.
