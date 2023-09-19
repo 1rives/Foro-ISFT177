@@ -18,6 +18,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use function PHPUnit\Framework\isEmpty;
+use function PHPUnit\Framework\isNull;
 use function PHPUnit\Framework\throwException;
 
 
@@ -57,19 +58,19 @@ class UserController extends AbstractController
         if ($registration_form->isSubmitted() && $registration_form->isValid()) {
             $submittedDNI = $registration_form->get('dni')->getData();
             $foundUser = $this->em->getRepository(User::class)->findOneBy(array('dni' => $submittedDNI));
-            
-            $foundUserStatus = $foundUser->getAccountStatus();
-            dd($foundUserStatus);
+            $foundUserStatus = $foundUser?->getAccountStatus();
 
+            // Si el usuario existe
+            if(!$foundUser) {
+                return $this->render('user/index.html.twig', [
+                    'registration_form' => $registration_form->createView(),
+                    'dni_error' => 'El DNI no está registrado, si sos alumno contactate con un administrador.'
+                ]);
+            }
+            
             // Para evitar el reenvio de formulario, se debe cambiar render a redirectToRoute
             // Se debe encontrar primero la manera de enviar el mensaje de error al front.
             switch($foundUserStatus) {
-                case null:
-                    return $this->render('user/index.html.twig', [
-                        'registration_form' => $registration_form->createView(),
-                        'dni_error' => 'El DNI no está registrado, si sos alumno contactate con un administrador.'
-                    ]);
-
                 case 1:
                     // TODO: Redirigir a verificación o enviar link a correo
                     return $this->redirectToRoute('register');

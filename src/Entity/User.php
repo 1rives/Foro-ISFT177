@@ -45,14 +45,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\NotBlank]
     #[Assert\Type('string')]
-//    #[Assert\Length(
-//        min: 8,
-//        max: 25
-//    )]
-    //#[Assert\NoSuspiciousCharacters]
-    //#[Assert\PasswordStrength(
-    //    message: 'Debe contener al menos un número y una mayúscula.'
-    //)]
+    #[Assert\Length(
+        min: 6,
+        max: 25
+    )]
+   //#[Assert\NoSuspiciousCharacters]
+   //#[Assert\PasswordStrength(
+   //    message: 'Debe contener al menos un número y una mayúscula.'
+   //)]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -101,6 +101,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::SMALLINT)]
     #[Assert\Type('int')]
     private ?int $account_status = null;
+
+    #[ORM\Column]
+    private ?bool $hide_email = null;
 
     public function __construct($id = null, $email = null, $password = null, $photo = null, $description = null)
     {
@@ -311,6 +314,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAccountStatus(int $account_status): static
     {
         $this->account_status = $account_status;
+
+        return $this;
+    }
+
+    public function isHideEmail(): ?bool
+    {
+        return $this->hide_email;
+    }
+
+    public function setHideEmail(bool $hide_email): static
+    {
+        $this->hide_email = $hide_email;
 
         return $this;
     }
