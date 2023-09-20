@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Constraints\Date;
 
 class PostController extends AbstractController
 {
@@ -73,7 +74,7 @@ class PostController extends AbstractController
             $url = $form->get('title')->getData();
             $post->setUrl($this->formatPostURL($url));
 
-            // Especifico el usuario siendo el único dato faltante
+            // Especifico el usuario
             // TODO: Investigar por qué es necesario ID 1
             $user = $this->em->getRepository(User::class)->find(1);
             $post->setUser($user);
@@ -134,6 +135,7 @@ class PostController extends AbstractController
             $interaction->setComment($comment);
             $interaction->setUser($user);
             $interaction->setPost($post);
+            $interaction->setCreationDate(New \DateTime());
 
             $this->em->persist($interaction);
             $this->em->flush();

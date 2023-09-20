@@ -13,12 +13,12 @@
         <div class="container-lg">
 
             {% block navbar %}
-                {% include 'general/navbar_top.html.twig' %}
+                {#{% include 'general/navbar_top.html.twig' %}#}
                 {% include 'general/hero.html.twig' %}
                 {% include 'general/navbar_bottom.html.twig' %}
             {% endblock %}
 
-            <main class="row mt-5 ms-md-0">
+            <main class="row mt-lg-4 mt-sm-2 ms-md-0">
 
                 {% block post_container %}
                     <div class="col-md-8">
@@ -36,7 +36,6 @@
                             {# Utilizado en post_details #}
                         {% endblock %}
                     </div>
-
                 {% endblock %}
 
                 {% block sidebar_container %}

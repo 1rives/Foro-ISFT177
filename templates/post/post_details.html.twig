@@ -56,8 +56,8 @@
             {% else %}
                 <div class="alert alert-light mb-0">
                     Para comentar, por favor
-                    <a href="{{ path('register') }}">Registrate</a> o
-                    <a href="{{ path('app_login') }}">inicia sesión</a>
+                    <a href="{{ path('register') }}" class="text-decoration-none">Registrate</a> o
+                    <a href="{{ path('app_login') }}" class="text-decoration-none">Inicia sesión</a>
                 </div>
             {% endif %}
         </div>
@@ -101,8 +101,8 @@
                                     </div>
 
                                     <small class="text-muted d-flex">
-                                        <img src="{{ asset('icons/clock.svg') }}" class="my-auto me-1" alt="Bootstrap" width="12" height="12">
-                                        {{ 'now'|date('d/m/Y') }}</small>
+                                        <img src="{{ asset('icons/clock.svg') }}" class="my-auto me-1" alt="Bootstrap" width="10" height="10">
+                                        {{ comment.creation_date | format_datetime('medium', 'short') }}</small>
                                 </div>
 
                                 <p class="d-flex flex-row text-justify text-break comment-text mb-0">{{ comment.comment }}</p>

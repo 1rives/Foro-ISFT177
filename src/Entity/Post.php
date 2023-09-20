@@ -15,7 +15,11 @@ class Post
      *  Todas las opciones seleccionables en el campo "type"
      *  del formulario Post
      */
-    const POST_TYPE_CHOICES = ['Opinión' => 'Opinión', 'Humor' => 'Humor'];
+    const POST_TYPE_CHOICES = [
+        'Analista de Sistemas' => 'Analista de Sistemas',
+        'Administración Contable' => 'Administración Contable',
+        'Gestión ambiental y salud' => 'Gestión ambiental y salud',
+        'Laboratorio en Análisis Clínicos' => 'Laboratorio en Análisis Clínicos'];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

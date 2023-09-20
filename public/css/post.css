@@ -51,3 +51,13 @@
   width: auto;
   border: #dee2e6 1px solid;
 }
+
+/**
+* Avatar de los comentarios del Post
+*
+* Ajusta el tamaño de los avatares de manera responsiva con un borde para distinguir la imagen.
+*/
+.text-justify {
+    text-align: justify;
+    text-justify: newspaper;
+}

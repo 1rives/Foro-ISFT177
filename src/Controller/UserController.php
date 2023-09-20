@@ -73,7 +73,10 @@ class UserController extends AbstractController
             switch($foundUserStatus) {
                 case 1:
                     // TODO: Redirigir a verificación o enviar link a correo
-                    return $this->redirectToRoute('register');
+                    return $this->render('user/index.html.twig', [
+                        'registration_form' => $registration_form->createView(),
+                        'dni_error' => 'Te enviamos un link al correo para verificar tu cuenta.'
+                    ]);
 
                 case 2:
                     return $this->render('user/index.html.twig', [

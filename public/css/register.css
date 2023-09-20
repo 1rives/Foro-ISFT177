@@ -1,3 +1,10 @@
+/*
+ * Archivo utilizado para el formulario de Registro
+ *
+ * register_form.html.twig
+ */
+
+
 html,
 body {
     height: 100%;
@@ -21,4 +28,18 @@ body {
 .form-signup input[type="password"] {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
+}
+
+/**
+* Formulario - Descripción del formulario
+*
+* Configuro para que el textarea se expande de manera vertical
+* con un límite de altura.
+*
+* ID creada por Symfony.
+*/
+#user_description {
+    max-height: 120px;
+    min-height: 62px;
+    resize: vertical;
 }

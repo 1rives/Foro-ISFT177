@@ -38,7 +38,8 @@ class PostRepository extends ServiceEntityRepository
                     post.creation_date, 
                     post.url,
                     user.id AS user_id,
-                    user.email AS user_username
+                    user.first_name AS user_firstname,
+                    user.last_name AS user_lastname
                 FROM App:Post post
                     JOIN post.user user
                 ORDER BY post.id DESC

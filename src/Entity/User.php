@@ -46,7 +46,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     #[Assert\Type('string')]
     #[Assert\Length(
-        min: 6,
+        min: 3,
         max: 25
     )]
    //#[Assert\NoSuspiciousCharacters]
@@ -90,8 +90,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\Type('int')]
     #[Assert\Length(
-        min: 5,
-        max: 15,
+        min: 1,
+        max: 2,
         minMessage: 'Debe contener más de {{ limit }} carácteres',
         maxMessage: 'Debe contener menos de {{ limit }} carácteres'
     )]

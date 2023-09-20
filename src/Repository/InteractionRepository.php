@@ -34,6 +34,7 @@ class InteractionRepository extends ServiceEntityRepository
                 SELECT 
                 interaction.id,
                 interaction.comment,
+                interaction.creation_date,
                 user.id AS user_id,
                 user.email AS user_email,
                 user.photo AS user_avatar
