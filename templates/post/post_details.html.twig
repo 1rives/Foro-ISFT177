@@ -82,7 +82,7 @@
                         <!-- Start Post Comment -->
                         <div class="d-flex flex-row p-3 my-1">
                         {% if is_granted('IS_AUTHENTICATED') %}
-                            <a href="{{ path('userProfile', {id: post.user.id}) }}">
+                            <a href="{{ path('userProfile', {id: comment.user_id}) }}">
                         {% elseif is_granted('IS_AUTHENTICATED') == false %}
                             <a href="#comment-avatar">
                         {% endif %}
