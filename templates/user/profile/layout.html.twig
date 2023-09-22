@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/post_list.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block title %}
+    {% if app.user.id == user.id %}
+        Mi perfil
+    {% else %}
+        Perfil de {{ user.first_name }} {{ user.last_name }}
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <body class="bg-body-secondary">
+
+    {% block content %}
+        <div class="container-lg">
+
+            {% block navbar %}
+                {#{% include 'general/navbar_top.html.twig' %}#}
+                {% include 'general/hero.html.twig' %}
+                {% include 'general/navbar_bottom.html.twig' %}
+            {% endblock %}
+
+            <main class="mt-lg-4 mt-sm-2">
+                {% block profile_container %}
+                    <div class="bg-body-tertiary rounded px-0 mb-md-3 mb-2">
+                        {% block breadcrumb %}
+                            {% include 'general/breadcrumb.html.twig' %}
+                        {% endblock %}
+
+                        {% block profile_content %}
+                             {# Contenido del perfil de User #}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+            </main>
+
+        </div>
+    {% endblock %}
+
+    {% block footer %}
+        {% include ('general/footer.html.twig') %}
+    {% endblock %}
+
+    </body>
+{% endblock %}

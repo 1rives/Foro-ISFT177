@@ -1,0 +1,20 @@
+/*
+ * Archivo utilizado en el perfil del User
+ *
+ * profile_content.html.twig
+ */
+
+/**
+* Perfil - Avatar del usuario
+*
+* Hago que la imagen cambie de tamaño de manera responsiva
+* y que la imagen siempre esté centrada.
+*/
+.img-profile {
+    width: 25vh;
+    height: 100%;
+    max-height: 40vh;
+    min-height: 120px;
+
+    object-fit: contain;
+}

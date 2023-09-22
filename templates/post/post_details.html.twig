@@ -81,7 +81,11 @@
                     {% for comment in comments %}
                         <!-- Start Post Comment -->
                         <div class="d-flex flex-row p-3 my-1">
-                            <a href="#">
+                        {% if is_granted('IS_AUTHENTICATED') %}
+                            <a href="{{ path('userProfile', {id: post.user.id}) }}">
+                        {% elseif is_granted('IS_AUTHENTICATED') == false %}
+                            <a href="#comment-avatar">
+                        {% endif %}
                                 {% if comment.user_avatar == NULL %}
                                     <img src="{{ asset('image/default_avatar.png') }}" class="post-comment__avatar rounded-circle mr-2">
                                 {% else %}
@@ -91,9 +95,12 @@
 
                             <div class="container-fluid">
                                 <div class="d-flex align-items-center pb-1">
-
                                     <div class="d-flex flex-row pe-2">
-                                        <a class="text-decoration-none text-dark fw-medium m-0" href="#">
+                                     {% if is_granted('IS_AUTHENTICATED') %}
+                                        <a class="text-decoration-none text-dark fw-medium m-0" href="{{ path('userProfile', {id: comment.user_id}) }}">
+                                     {% elseif is_granted('IS_AUTHENTICATED') == false %}
+                                        <a class="text-decoration-none text-dark fw-medium m-0" href="#comment">
+                                     {% endif %}
                                             <span class="mr-2">
                                                  {{ comment.user_full_name }}
                                             </span>
@@ -102,7 +109,8 @@
 
                                     <small class="text-muted d-flex">
                                         <img src="{{ asset('icons/clock.svg') }}" class="my-auto me-1" alt="Bootstrap" width="10" height="10">
-                                        {{ comment.creation_date | format_datetime('medium', 'short') }}</small>
+                                        {{ comment.creation_date | format_datetime('medium', 'short') }}
+                                    </small>
                                 </div>
 
                                 <p class="d-flex flex-row text-justify text-break comment-text mb-0">{{ comment.comment }}</p>

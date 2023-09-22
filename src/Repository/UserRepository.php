@@ -39,6 +39,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Devuelve los datos necesarios para el perfil del
+     * User requerido.
+     *
+     * @param $userId int               ID del User
+     * @return float|int|mixed|string   Información del usuario
+     */
+    public function findUserProfileData($userId) {
+        $qb = $this->createQueryBuilder('u')
+            ->select(
+                'u.id, 
+                u.photo,
+                u.first_name,
+                u.last_name,
+                u.email,
+                u.description,
+                u.hide_email,
+                u.account_status'
+            )
+            ->where('u.id = :user_id')
+            ->setParameter('user_id', $userId);
+
+        // TODO: Obtener solamente un resultado, sin utilizar [0]
+        return $qb->getQuery()->execute()[0];
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

@@ -51,7 +51,11 @@
                             </h3>
                         </a>
                         <span class="text-muted">{{ post.creation_date | format_datetime('full', 'short') | capitalize }} por
-                            <a href="#" class="text-decoration-none">{{ post.user_firstname }} {{ post.user_lastname }}</a>
+                            {% if is_granted('IS_AUTHENTICATED') %}
+                                <a href="{{ path('userProfile', {id: post.user_id}) }}" class="text-decoration-none">{{ post.user_firstname }} {{ post.user_lastname }}</a>
+                            {% elseif is_granted('IS_AUTHENTICATED') == false %}
+                                <a href="#post" class="text-decoration-none">{{ post.user_firstname }} {{ post.user_lastname }}</a>
+                            {% endif %}
                         </span>
                     </div>
                     <hr class="mt-3">

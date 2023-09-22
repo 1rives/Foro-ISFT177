@@ -1,5 +1,18 @@
 <!-- Start Register Form -->
 {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+    {% if error is defined %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% elseif message is defined %}
+        <div class="alert alert-light alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endif %}
+
+
     <div class="col-md-6">
         {{ form_label(form.email) }}
         {{ form_widget(form.email) }}
@@ -40,9 +53,6 @@
         {% endif %}
     </div>
     <div class="col-12">
-        {% if dni_error is defined %}
-            <div class="text-danger pb-3">{{ dni_error }}</div>
-        {% endif %}
         {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
     </div>
     {# If you want to control the URL the user is redirected to on success #}

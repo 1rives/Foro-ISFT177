@@ -60,6 +60,8 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('ROLE_USER');
+
             // Trae el archivo del post
             $file = $form->get('file')->getData();
 
@@ -96,12 +98,15 @@ class PostController extends AbstractController
      * Devuelve todos los detalles de un post por medio de la ID.
      *
      * @param Post $post
+     * @param InteractionRepository $interactionRepository
      * @return Response
      */
     #[Route('/post/details/{id}', name: 'postDetails')]
-    public function postDetails(Post $post): Response
+    public function postDetails(Post $post, InteractionRepository $interactionRepository): Response
     {
-        $comments = $this->em->getRepository(Interaction::class)->findPostComments($post->getId());
+        $postId = $post->getId();
+
+        $comments = $interactionRepository->findPostComments($postId);
         $commentsWithNames = $this->addUserNameToArrayElements($comments);
 
         return $this->render('post/post_details.html.twig', [
@@ -119,16 +124,17 @@ class PostController extends AbstractController
     #[Route('/commentPost', name: 'commentPost')]
     public function commentPost(Request $request): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         $interaction = new Interaction();
 
         $comment = $request->request->get("comment");
-
         $postId = $request->request->get("post-id");
         $post = $this->em->getRepository(Post::class)->find($postId);
         $userId = $request->request->get("user-id");
         $user = $this->em->getRepository(User::class)->find($userId);
 
-        // Creo la redirección al mismo Post
+        // Redirección a la página anterior
         $postRoute = $request->headers->get('referer');
 
         if ($comment) {
@@ -140,8 +146,6 @@ class PostController extends AbstractController
             $this->em->persist($interaction);
             $this->em->flush();
 
-            // Redirecciona al post
-            $postRoute = $request->headers->get('referer');
             return $this->redirect($postRoute);
         }
 
@@ -157,7 +161,10 @@ class PostController extends AbstractController
      * @throws \Exception
      */
     #[Route('/likes', name: 'likes', options: ['expose' => true])]
-    public function Like(Request $request, UserInterface $userInterface) {
+    public function Like(Request $request, UserInterface $userInterface)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
         if($request->isXmlHttpRequest()){
             $currentUserID = $userInterface->getUserIdentifier();
 
@@ -189,6 +196,7 @@ class PostController extends AbstractController
             $userId = $arrayElement['user_id'];
             $user = $this->em->getRepository(User::class)->find($userId);
 
+            // Si falta un campo, nombre predeterminado
             (!$user->getFirstName() || !$user->getLastName()) ?
                 $userName = "Usuario" :
                 $userName = $user->getFirstName() . " " . $user->getLastName();

@@ -5,7 +5,12 @@
     <hr class="my-3">
 
     <small class="text-muted">{{ post.creationdate | format_datetime('full', 'short') | capitalize }} por
-        <a href="#" class="text-decoration-none">{{ post.user.firstname }} {{ post.user.lastname }}</a>
+        {% if is_granted('IS_AUTHENTICATED') %}
+            <a href="{{ path('userProfile', {id: post.user.id}) }}" class="text-decoration-none">
+        {% elseif is_granted('IS_AUTHENTICATED') == false %}
+            <a href="#comment" class="text-decoration-none">
+        {% endif %}
+            {{ post.user.firstname }} {{ post.user.lastname }}</a>
     </small>
 
     <div class="pt-3 pb-2">

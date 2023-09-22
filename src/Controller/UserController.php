@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
 use Exception;
@@ -62,9 +63,9 @@ class UserController extends AbstractController
 
             // Si el usuario existe
             if(!$foundUser) {
-                return $this->render('user/index.html.twig', [
+                return $this->render('register/index.html.twig', [
                     'registration_form' => $registration_form->createView(),
-                    'dni_error' => 'El DNI no está registrado, si sos alumno contactate con un administrador.'
+                    'error' => 'El DNI no está registrado, si sos alumno contactate con un administrador.'
                 ]);
             }
             
@@ -73,15 +74,15 @@ class UserController extends AbstractController
             switch($foundUserStatus) {
                 case 1:
                     // TODO: Redirigir a verificación o enviar link a correo
-                    return $this->render('user/index.html.twig', [
+                    return $this->render('user/register/index.html.twig', [
                         'registration_form' => $registration_form->createView(),
-                        'dni_error' => 'Te enviamos un link al correo para verificar tu cuenta.'
+                        'error' => 'Ya se encuentra una cuenta registrada con el DNI.'
                     ]);
 
                 case 2:
-                    return $this->render('user/index.html.twig', [
+                    return $this->render('user/register/index.html.twig', [
                         'registration_form' => $registration_form->createView(),
-                        'dni_error' => 'Ya se encuentra una cuenta registrada con el DNI.'
+                        'error' => 'Ya se encuentra una cuenta registrada con el DNI.'
                     ]);
             }
 
@@ -108,19 +109,39 @@ class UserController extends AbstractController
             $hashedPassword = $passwordHasher->hashPassword($userData, $formPassword);
             $foundUser->setPassword($hashedPassword);
 
+            // Variables faltantes
             $foundUser->setEmail($formEmail);
             $foundUser->setDescription($formDescription);
             $foundUser->setRoles($userRole);
             $foundUser->setAccountStatus($unverifiedAccountStatus);
 
-            //$this->em->persist($user);
             $this->em->flush();
 
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('user/index.html.twig', [
+        return $this->render('user/register/index.html.twig', [
             'registration_form' => $registration_form->createView(),
+        ]);
+    }
+
+    /**
+     * Devuelve la información requerida del User a la
+     * vista del perfil.
+     *
+     * @param User $user
+     * @param UserRepository $userRepository
+     * @return Response
+     */
+    #[Route('/profile/{id}', name: 'userProfile')]
+    public function userProfile(User $user, UserRepository $userRepository) {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $userId = $user->getId();
+        $userData = $userRepository->findUserProfileData($userId);
+
+        return $this->render('user/profile/index.html.twig', [
+            'user' => $userData
         ]);
     }
 

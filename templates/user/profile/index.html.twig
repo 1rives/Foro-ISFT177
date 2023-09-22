@@ -1,0 +1,11 @@
+{% extends 'user/profile/layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link href="{{ asset('css/profile.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block profile_content %}
+    {% include 'user/profile/profile_content.html.twig' %}
+{% endblock %}
