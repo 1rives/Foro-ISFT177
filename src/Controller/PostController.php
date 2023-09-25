@@ -7,6 +7,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Form\PostType;
 use App\Form\InteractionType;
+use App\Repository\PostRepository;
 use App\Repository\InteractionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
@@ -177,7 +178,31 @@ class PostController extends AbstractController
             $this->em->flush();
             return new JsonResponse(['likes' => $likes]);
         }else {
-            throw new \Exception('Error');
+            return $this->redirectToRoute('app_post');
+        }
+    }
+
+    /**
+     * Editar el comentario de un Post
+     *
+     * @param Request $request
+     * @param UserInterface $userInterface
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    #[Route('/comment/edit', name: 'comment_edit', options: ['expose' => true])]
+    public function editComment(Request $request, PostRepository $postRepository)
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        if($request->isXmlHttpRequest()){
+            $commentId = $request->get('id')->getData();
+            $postUrl = $request->get('postUrl')->getData();
+
+            $this->em->flush();
+            // ARREGLAR
+        }else {
+            return $this->redirectToRoute('app_post');
         }
     }
 

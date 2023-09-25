@@ -7,10 +7,11 @@
 /**
 * Formulario - Comentario para el Post
 *
-* Configuro para que el textarea se expande de manera vertical
+* Configuro para que los textarea se expandan de manera vertical
 * con un límite de alto.
 */
-#post-comment__textarea {
+#post-comment__textarea,
+textarea {
     resize: vertical;
     max-height: 200px;
     min-height: 86px;

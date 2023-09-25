@@ -21,6 +21,13 @@
 
 {% endblock %}
 
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    <script src="{{ asset('js/post-ajax.js') }}"></script>
+{% endblock %}
+
 {% block post_comment_section %}
 
     <div class="mt-md-4 mb-md-5 mt-3 mb-4">
@@ -94,10 +101,11 @@
                             </a>
 
                             <div class="container-fluid">
-                                <div class="d-flex align-items-center pb-1">
-                                    <div class="d-flex flex-row pe-2">
+                                <div class="d-flex justify-content-between pb-1">
+
+                                    <div class="flex-column pe-2">
                                      {% if is_granted('IS_AUTHENTICATED') %}
-                                        <a class="text-decoration-none text-dark fw-medium m-0" href="{{ path('userProfile', {id: comment.user_id}) }}">
+                                        <a class="flex-column text-dark text-decoration-none fw-medium m-0" href="{{ path('userProfile', {id: comment.user_id}) }}">
                                      {% elseif is_granted('IS_AUTHENTICATED') == false %}
                                         <a class="text-decoration-none text-dark fw-medium m-0" href="#comment">
                                      {% endif %}
@@ -105,17 +113,47 @@
                                                  {{ comment.user_full_name }}
                                             </span>
                                         </a>
+
+                                        <small class="flex-column text-muted">
+                                            <img src="{{ asset('icons/clock.svg') }}" class="me-1" alt="Bootstrap" width="10" height="10">
+                                            {{ comment.creation_date | format_datetime('medium', 'short') }}
+                                        </small>
                                     </div>
 
-                                    <small class="text-muted d-flex">
-                                        <img src="{{ asset('icons/clock.svg') }}" class="my-auto me-1" alt="Bootstrap" width="10" height="10">
-                                        {{ comment.creation_date | format_datetime('medium', 'short') }}
-                                    </small>
-                                </div>
+                                    {% if app.user.id == comment.user_id %}
+                                    <!-- Button trigger modal -->
+                                    <a class="flex-column align-content-end text-dark text-decoration-none fw-medium m-0"
+                                       data-bs-toggle="modal" data-bs-target="#commentEdit{{ comment.id }}Modal" href="{{ path('userProfile', {id: comment.user_id}) }}">Editar</a>
 
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="commentEdit{{ comment.id }}Modal" tabindex="-1" aria-labelledby="commentEdit{{ comment.id }}ModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="commentEdit{{ comment.id }}ModalLabel">Editar comentario</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <label for="commentEdit{{ comment.id }}__description" class="form-label">Comentario</label>
+                                                    <textarea type="text" class="form-control" id="commentEdit{{ comment.id }}__description"
+                                                              minlength="10" maxlength="255" required>{{ comment.comment }}</textarea>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                    <button type="submit" class="btn btn-primary" onclick="editComment({{ comment.id }})">Guardar Cambios</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                </div>
                                 <p class="d-flex flex-row text-justify text-break comment-text mb-0">{{ comment.comment }}</p>
                             </div>
-
                         </div>
                         <!-- End Post Comment -->
                     {% endfor %}
