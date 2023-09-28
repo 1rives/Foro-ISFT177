@@ -25,6 +25,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints\Date;
 
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 class PostController extends AbstractController
 {
     private $em;
@@ -103,8 +106,22 @@ class PostController extends AbstractController
      * @return Response
      */
     #[Route('/post/details/{id}', name: 'postDetails')]
-    public function postDetails(Post $post, InteractionRepository $interactionRepository): Response
+    public function postDetails(Post $post, InteractionRepository $interactionRepository, MailerInterface $mailer): Response
     {
+        // Prueba de Mailer
+        // No funciona, arreglar por favor que se pudre todo
+        $email = (new Email())
+            ->from('hello@example.com')
+            ->to('you@example.com')
+            //->cc('cc@example.com')
+            //->bcc('bcc@example.com')
+            //->replyTo('fabien@example.com')
+            //->priority(Email::PRIORITY_HIGH)
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!');
+
+        $mailer->send($email);
+
         $postId = $post->getId();
 
         $comments = $interactionRepository->findPostComments($postId);
