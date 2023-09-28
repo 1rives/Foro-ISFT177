@@ -91,7 +91,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Type('int')]
     #[Assert\Length(
         min: 1,
-        max: 2,
+        max: 10,
         minMessage: 'Debe contener más de {{ limit }} carácteres',
         maxMessage: 'Debe contener menos de {{ limit }} carácteres'
     )]

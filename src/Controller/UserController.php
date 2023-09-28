@@ -63,7 +63,7 @@ class UserController extends AbstractController
 
             // Si el usuario existe
             if(!$foundUser) {
-                return $this->render('register/index.html.twig', [
+                return $this->render('user/register/index.html.twig', [
                     'registration_form' => $registration_form->createView(),
                     'error' => 'El DNI no está registrado, si sos alumno contactate con un administrador.'
                 ]);

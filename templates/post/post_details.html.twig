@@ -120,7 +120,7 @@
                                         </small>
                                     </div>
 
-                                    {% if app.user.id == comment.user_id %}
+                                    {% if app.user.id is defined and app.user.id == comment.user_id %}
                                     <!-- Button trigger modal -->
                                     <a class="flex-column align-content-end text-dark text-decoration-none fw-medium m-0"
                                        data-bs-toggle="modal" data-bs-target="#commentEdit{{ comment.id }}Modal" href="{{ path('userProfile', {id: comment.user_id}) }}">Editar</a>
