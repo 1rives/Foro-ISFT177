@@ -1,17 +1,43 @@
 <!-- Start Register Form -->
 {{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
-    {% if error is defined %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ error }}
+    {# Dependiendo del flash (Mensaje) recibido, muestra un div #}
+    {# TODO: Reducir código #}
+    {% for flash_message in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger alert-dismissible d-flex align-items-center fade show" role="alert">
+            <div class="text-danger">
+                {{ flash_message }}
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-    {% elseif message is defined %}
-        <div class="alert alert-light alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
+    {% endfor %}
 
+    {% for flash_message in app.flashes('notify') %}
+        <div class="alert alert-light alert-dismissible border-dark-subtle d-flex align-items-center fade show" role="alert">
+            <img src="{{ asset('icons/info-circle.svg') }}" class="me-2" width="16" height="16">
+            <div>
+                {{ flash_message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {% for flash_message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible d-flex align-items-center fade show" role="alert">
+            <div class="text-danger">
+                {{ flash_message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible d-flex align-items-center fade show" role="alert">
+            <div class="text-success">
+                {{ flash_message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
 
     <div class="col-md-6">
         {{ form_label(form.email) }}
@@ -57,5 +83,5 @@
     </div>
     {# If you want to control the URL the user is redirected to on success #}
     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-{{ form_end(form, {'content': 'sas'}) }}
+{{ form_end(form) }}
 <!-- End Register Form -->

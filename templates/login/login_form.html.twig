@@ -4,6 +4,45 @@
         <div class="text-danger pb-2">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
+    {# Dependiendo del flash (Mensaje) recibido, muestra un div #}
+    {# TODO: Reducir código #}
+    {% for flash_message in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger alert-dismissible d-flex align-items-center fade show" role="alert">
+            <div class="text-danger">
+                {{ flash_message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {% for flash_message in app.flashes('notify') %}
+        <div class="alert alert-light alert-dismissible border-dark-subtle d-flex align-items-center fade show" role="alert">
+            <img src="{{ asset('icons/info-circle.svg') }}" class="me-2" width="16" height="16">
+            <div>
+                {{ flash_message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {% for flash_message in app.flashes('error') %}
+        <div class="alert alert-danger alert-dismissible d-flex align-items-center fade show" role="alert">
+            <div class="text-danger">
+                {{ flash_message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
+    {% for flash_message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible d-flex align-items-center fade show" role="alert">
+            <div class="text-success">
+                {{ flash_message }}
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+
     <div class="form-floating">
         <input type="email" id="username" name="_username"
         placeholder="name@example.com" class="form-control" value="{{ last_username }}" required>
@@ -29,7 +68,7 @@
 
     <input type="submit" class="btn btn-primary w-100 py-2" value="Entrar">
 
-    <p class="mt-2">No tienes una cuenta? <a href="{{ path('register') }}">Registrate</a></p>
+    <p class="mt-2">No tienes una cuenta? <a href="{{ path('app_register') }}">Registrate</a></p>
 
     <p class="mt-3 mb-2 text-body-secondary">© 2023</p>
 </form>
