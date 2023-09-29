@@ -38,7 +38,10 @@ class EmailVerifier
         $context['expiresAtMessageData'] = $signatureComponents->getExpirationMessageData();
 
         $email->context($context);
-        dd($context);
+
+        // Borrar esto al arreglar envio de correos
+        dd('El link de verificación es: ' . $context['signedUrl']);
+
         $this->mailer->send($email);
     }
 
