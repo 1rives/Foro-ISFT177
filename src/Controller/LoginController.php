@@ -13,6 +13,10 @@ class LoginController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function index(AuthenticationUtils $authenticationUtils): Response
     {
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_post');
+       }
+
         // obtiene error de login al encontrarse uno
         $error = $authenticationUtils->getLastAuthenticationError();
 
