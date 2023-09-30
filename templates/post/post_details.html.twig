@@ -25,7 +25,7 @@
     {{ parent() }}
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
-    <script src="{{ asset('js/post-ajax.js') }}"></script>
+    <script src="{{ asset('js/post.js') }}"></script>
 {% endblock %}
 
 {% block post_comment_section %}
@@ -83,11 +83,12 @@
 
                 </div>
 
+                <!-- Start Post Comments -->
                 {% if comments != null %}
-                <div class="row bg-body border border-1 rounded mt-2 p-1">
+                <div class="row gap-2 bg-body border border-1 rounded mt-2 p-1">
                     {% for comment in comments %}
                         <!-- Start Post Comment -->
-                        <div class="d-flex flex-row p-3 my-1">
+                        <div id="comment{{ comment.id }}" class="d-flex flex-row border rounded py-3">
                         {% if is_granted('IS_AUTHENTICATED') %}
                             <a href="{{ path('userProfile', {id: comment.user_id}) }}">
                         {% elseif is_granted('IS_AUTHENTICATED') == false %}
@@ -122,43 +123,48 @@
 
                                     {% if app.user.id is defined and app.user.id == comment.user_id %}
                                     <!-- Button trigger modal -->
-                                    <a class="flex-column align-content-end text-dark text-decoration-none fw-medium m-0"
-                                       data-bs-toggle="modal" data-bs-target="#commentEdit{{ comment.id }}Modal" href="{{ path('userProfile', {id: comment.user_id}) }}">Editar</a>
+                                    <button class="btn flex-column align-content-end text-dark text-decoration-none fw-medium m-0 p-0"
+                                       id="#commentEditButton{{ comment.id }}" data-bs-toggle="collapse" data-bs-target="#commentEdit{{ comment.id }}"
+                                            aria-expanded="false" aria-controls="commentEdit{{ comment.id }}">Editar</button>
 
                                     <!-- Modal -->
-                                    <div class="modal fade" id="commentEdit{{ comment.id }}Modal" tabindex="-1" aria-labelledby="commentEdit{{ comment.id }}ModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
+{#                                    <div class="modal fade" id="commentEdit{{ comment.id }}Modal" tabindex="-1" aria-labelledby="commentEdit{{ comment.id }}ModalLabel" aria-hidden="true">#}
+{#                                        <div class="modal-dialog modal-dialog-centered">#}
+{#                                            <div class="modal-content">#}
 
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="commentEdit{{ comment.id }}ModalLabel">Editar comentario</h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
+{#                                                <div class="modal-header">#}
+{#                                                    <h1 class="modal-title fs-5" id="commentEdit{{ comment.id }}ModalLabel">Editar comentario</h1>#}
+{#                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#                                                </div>#}
 
-                                                <div class="modal-body">
-                                                    <label for="commentEdit{{ comment.id }}__description" class="form-label">Comentario</label>
-                                                    <textarea type="text" class="form-control" id="commentEdit{{ comment.id }}__description"
-                                                              minlength="10" maxlength="255" required>{{ comment.comment }}</textarea>
-                                                </div>
+{#                                                <div class="modal-body">#}
+{#                                                    <label for="commentEdit{{ comment.id }}__description" class="form-label">Comentario</label>#}
+{#                                                    <textarea type="text" class="form-control" id="commentEdit{{ comment.id }}__description"#}
+{#                                                              minlength="10" maxlength="255" required>{{ comment.comment }}</textarea>#}
+{#                                                </div>#}
 
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                                    <button type="submit" class="btn btn-primary" onclick="editComment({{ comment.id }})">Guardar Cambios</button>
-                                                </div>
+{#                                                <div class="modal-footer">#}
+{#                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>#}
+{#                                                    <button type="submit" class="btn btn-primary" onclick="editComment({{ comment.id }})">Guardar Cambios</button>#}
+{#                                                </div>#}
 
-                                            </div>
-                                        </div>
-                                    </div>
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
                                     {% endif %}
-
                                 </div>
-                                <p class="d-flex flex-row text-justify text-break comment-text mb-0">{{ comment.comment }}</p>
+
+                                <div id="commentContent{{ comment.id }}">
+                                    <p class="d-flex flex-row text-justify text-break comment-text mb-0">{{ comment.comment }}</p>
+                                </div>
+
                             </div>
                         </div>
                         <!-- End Post Comment -->
                     {% endfor %}
                 </div>
                 {% endif %}
+                <!-- End Post Comments -->
 
             </div>
         </div>

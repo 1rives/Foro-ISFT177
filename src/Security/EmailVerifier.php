@@ -40,7 +40,7 @@ class EmailVerifier
         $email->context($context);
 
         // Borrar esto al arreglar envio de correos
-        dd('El link de verificación es: ' . $context['signedUrl']);
+        //dd('El link de verificación es: ' . $context['signedUrl']);
 
         $this->mailer->send($email);
     }
