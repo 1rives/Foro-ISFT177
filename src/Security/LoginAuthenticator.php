@@ -41,14 +41,17 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function authenticate(Request $request): Passport
     {
+        //Se obtiene el nombre de usuario/email enviado desde el formulario del login
         $email = $request->request->get('_username', '');
 
         $request->getSession()->set(Security::LAST_USERNAME, $email);
 
+        //Se traen todos los datos del usuario con ese username/email
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
 
         //$status = $this->em->getRepository(User::class)->find(1)->isRegistro();
 
+        //Si no devuelve nada es porque el usuario no está registrado
         if (!$user) :
             throw new CustomUserMessageAuthenticationException('Usuario no registrado.');
         endif;
@@ -61,12 +64,17 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
             throw new CustomUserMessageAuthenticationException('Usuario no verificado. Por favor revise su email para activar su cuenta.');
         endif;*/
 
+        //En el caso de que se encuentre el usuario registrado, se trae su estado.
         $status = $user->getAccountStatus();
 
+        //Si el estado es diferente de 2, quiere decir que la cuenta del usuario no está habilitada
+        //y se le debe enviar un método para que la active mediante el mail
         if ($status != 2) :
             throw new CustomUserMessageAuthenticationException('Cuenta inhabilitada.');
         endif;
 
+        //En caso de que el usuario se encuntre registrado y la cuenta esté habilitada
+        //se verifica si escribió correctamente la contraseña
         return new Passport(
             new UserBadge($email),
             new PasswordCredentials($request->request->get('_password', '')),
@@ -93,6 +101,8 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         // For example:
         // return new RedirectResponse($this->urlGenerator->generate('some_route'));
         //throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+
+        //Si la contraseña es correcta, se lo reedirecciona al index de los posts
         return new RedirectResponse($this->urlGenerator->generate('app_post'));
     }
 
