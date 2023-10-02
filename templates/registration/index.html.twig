@@ -1,0 +1,5 @@
+{% extends 'registration/layout.html.twig' %}
+
+{% block register_form %}
+    {% include 'registration/register_form.html.twig' with {form: registration_form} %}
+{% endblock %}

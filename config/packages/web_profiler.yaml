@@ -1,6 +1,9 @@
 when@dev:
     web_profiler:
         toolbar: true
+        # Habilitar esta opción intercepta las redirecciones, por consecuencia
+        # capturando los correos a enviar, en vez de utilizar una herramienta
+        # como MailCatcher se puede utilizar esto para ver los contenidos del correo.
         intercept_redirects: false
 
     framework:
