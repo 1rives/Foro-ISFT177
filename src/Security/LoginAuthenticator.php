@@ -6,9 +6,12 @@ use App\Entity\Configuracion;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mime\Address;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -31,12 +34,14 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     private UrlGeneratorInterface $urlGenerator;
     private $em;
     private $authorizationChecker;
+    private EmailVerifier $emailVerifier;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, EntityManagerInterface $em, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(UrlGeneratorInterface $urlGenerator, EntityManagerInterface $em, AuthorizationCheckerInterface $authorizationChecker, EmailVerifier $emailVerifier)
     {
         $this->urlGenerator = $urlGenerator;
         $this->em = $em;
         $this->authorizationChecker = $authorizationChecker;
+        $this->emailVerifier = $emailVerifier;
     }
 
     public function authenticate(Request $request): Passport
@@ -69,8 +74,20 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
         //Si el estado es diferente de 2, quiere decir que la cuenta del usuario no está habilitada
         //y se le debe enviar un método para que la active mediante el mail
-        if ($status != 2) :
-            throw new CustomUserMessageAuthenticationException('Cuenta inhabilitada.');
+        if ($status == 1) :
+
+            // Genero el correo a enviar en caso de validación
+            $validationEmail = (new TemplatedEmail())
+                ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
+                ->to('mail@gmail.com')
+                ->subject('Verificá tu correo')
+                ->htmlTemplate('emails/confirmation_email.html.twig');
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user, $validationEmail);
+
+            //$this->controller->addFlash('notify', 'Se ha enviado un enlace para verificar tu cuenta (La cuenta ya existe).');
+            //return $this->redirectToRoute('app_register');
+
+            throw new CustomUserMessageAuthenticationException('Se ha enviado un correo, por favor revise su correo');
         endif;
 
         //En caso de que el usuario se encuntre registrado y la cuenta esté habilitada

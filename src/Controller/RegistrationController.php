@@ -57,14 +57,7 @@ class RegistrationController extends AbstractController
             $foundUser = $userRepository->findOneBy(array('dni' => $submittedDNI));
             $foundUserStatus = $foundUser?->getAccountStatus();
 
-            // Genero el correo a enviar en caso de validación
-            $validationEmail = (new TemplatedEmail())
-                ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
-                ->to($foundUser->getEmail())
-                ->subject('Verificá tu correo')
-                ->htmlTemplate('emails/confirmation_email.html.twig');
-
-            // Si el usuario no existe
+            // Si el usuario no existe (DNI)
             if(!$foundUser) {
                 $this->addFlash('error', 'El DNI no está registrado, si sos alumno contactate con un administrador.');
                 return $this->redirectToRoute('app_register');
@@ -72,6 +65,13 @@ class RegistrationController extends AbstractController
 
             // Si el usuario no está validado
             if($foundUserStatus === 1) {
+                // Genero el correo a enviar en caso de validación
+                $validationEmail = (new TemplatedEmail())
+                    ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
+                    ->to($foundUser->getEmail())
+                    ->subject('Verificá tu correo')
+                    ->htmlTemplate('emails/confirmation_email.html.twig');
+
                 $this->emailVerifier->sendEmailConfirmation('app_verify_email', $foundUser, $validationEmail);
 
                 $this->addFlash('notify', 'Se ha enviado un enlace para verificar tu cuenta (La cuenta ya existe).');
@@ -115,14 +115,19 @@ class RegistrationController extends AbstractController
 
             $this->em->flush();
 
-            // Genero URL y envio verificación a User
+            // Genero correo y URL, y envio verificación a User
+            $validationEmail = (new TemplatedEmail())
+            ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
+            ->to($registration_form->get('email')->getData())
+            ->subject('Verificá tu correo')
+            ->htmlTemplate('emails/confirmation_email.html.twig');
+            
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $foundUser, $validationEmail);
 
             $this->addFlash('success', 'Se ha enviado un enlace de verificación al correo.');
             return $this->redirectToRoute('app_login');
         }
 
-        //$this->addFlash('error', 'El DNI no está registrado, si sos alumno contactate con un administrador.');
         return $this->render('registration/index.html.twig', [
             'registration_form' => $registration_form->createView(),
         ]);

@@ -40,6 +40,8 @@ class EmailVerifier
         $email->context($context);
 
         // Borrar esto al arreglar envio de correos
+        // Habilitar solamente para debug de login, en caso de
+        // registro, configurar en services/web_profile.yaml
         //dd('El link de verificación es: ' . $context['signedUrl']);
 
         $this->mailer->send($email);
