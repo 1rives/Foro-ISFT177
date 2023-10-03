@@ -17,10 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[UniqueEntity(
-    fields: 'email',
-    message: 'Este correo ya se encuentra utilizado.'
-)]
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
