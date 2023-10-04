@@ -7,6 +7,7 @@ use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Bundle\FrameworkBundle\Controller\RedirectController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,22 +29,21 @@ use Symfony\Component\Security\Http\Util\TargetPathTrait;
 class LoginAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
-
     public const LOGIN_ROUTE = 'app_login';
-
     private UrlGeneratorInterface $urlGenerator;
-    private $em;
-    private $authorizationChecker;
+    private EntityManagerInterface $em;
+    private AuthorizationCheckerInterface $authorizationChecker;
     private EmailVerifier $emailVerifier;
+    private RedirectController $redirect;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, EntityManagerInterface $em, AuthorizationCheckerInterface $authorizationChecker, EmailVerifier $emailVerifier)
+    public function __construct(RedirectController $redirect, UrlGeneratorInterface $urlGenerator, EntityManagerInterface $em, AuthorizationCheckerInterface $authorizationChecker, EmailVerifier $emailVerifier)
     {
         $this->urlGenerator = $urlGenerator;
         $this->em = $em;
         $this->authorizationChecker = $authorizationChecker;
         $this->emailVerifier = $emailVerifier;
+        $this->redirect = $redirect;
     }
-
     public function authenticate(Request $request): Passport
     {
         //Se obtiene el nombre de usuario/email enviado desde el formulario del login
@@ -78,16 +78,22 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
             // Genero el correo a enviar en caso de validación
             $validationEmail = (new TemplatedEmail())
-                ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
-                ->to('mail@gmail.com')
+                ->from(new Address('foroisft@gmail.com', 'Foro ISFT 177'))
+                ->to($user->getEmail())
                 ->subject('Verificá tu correo')
                 ->htmlTemplate('emails/confirmation_email.html.twig');
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user, $validationEmail);
 
-            //$this->controller->addFlash('notify', 'Se ha enviado un enlace para verificar tu cuenta (La cuenta ya existe).');
-            //return $this->redirectToRoute('app_register');
+            // Añadir mensajes flash
+            $session = $request->getSession();
+            $session->getFlashBag()->add(
+                'notify',
+                'Se ha enviado un enlace para verificar tu cuenta al correo registrado.'
+            );
 
-            throw new CustomUserMessageAuthenticationException('Se ha enviado un correo, por favor revise su correo');
+            // Ya que no puedo acceder a redirectToRoute, llamo al controlador RedirectController
+            //$this->redirect->urlRedirectAction($request,'/login');
+            throw new CustomUserMessageAuthenticationException();
         endif;
 
         //En caso de que el usuario se encuntre registrado y la cuenta esté habilitada

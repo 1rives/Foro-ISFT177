@@ -54,10 +54,9 @@ class EmailVerifier
     {
         $this->verifyEmailHelper->validateEmailConfirmation($request->getUri(), $user->getId(), $user->getEmail());
 
-        // Cambio campo creado por accountStatus
+        // Habilito la cuenta
         $user->setAccountStatus(2);
 
-        //$this->entityManager->persist($user);
         $this->entityManager->flush();
     }
 }

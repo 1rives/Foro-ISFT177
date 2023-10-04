@@ -2,50 +2,17 @@ const POST_LIKE_ROUTE = Routing.generate('likes');
 const COMMENT_EDIT_ROUTE = Routing.generate('comment_edit');
 const CURRENT_POST_ID = window.location.pathname.split('/').pop();
 window.addEventListener("load", (event) => {
-    // Utilizado para verificar que solamente se esté
-    // editando un comentario por vez guardando el ID
-    // del comentario, en el caso de que no se esté editando
-    // ninguno, deberá estar en null.
-    var currentCommentIdBeingEdited = null;
-
     // Obtengo los botones utilizados para editar comentarios
     let buttonList = document.querySelectorAll('button[id*="commentEditButton"]');
     let buttonListLength = buttonList.length;
 
     for (let i = 0; i < buttonListLength; i++ ) {
         buttonList[i].addEventListener( 'click', (event) => {
-            // TODO: Cada vez que un usuario quiera editar un comentario sin cerrar otro
-            // que tenga abierto, el anterior debera cerrarse automaticamente.
-            //
-            // TODO: Que el código se entienda =)
-            //
-            // if(currentCommentIdBeingEdited != null) {
-            //     // Evento propio de Bootstrap
-            //     // Realiza acciones al esconder completamente el element del collapse
-            //     let activeElement = document.getElementById(`commentEdit${currentCommentIdBeingEdited}`);
-            //
-            //     // Escondo el elemento anteriormente activo
-            //     const bsCollapse = new bootstrap.Collapse(activeElement, {
-            //         toggle: true,
-            //     })
-            //
-            //     activeElement.addEventListener('hidden.bs.collapse', (event) => {
-            //         // Escondo los elementos
-            //         //commentContainer.removeChild(activeElement);
-            //
-            //         //showElement(currentCommentBeingEdited);
-            //         //hideElement(originalComment);
-            //         currentCommentIdBeingEdited = null;
-            //     })
-            // }
-
-            // ID del comentario actual
+            // ID del comentario a editar
             let commentId = event.target.id.replace(/[^0-9]/g, '');
 
             // Contenedor del comentario
             let commentContainer = document.getElementById(`commentContent${commentId}`);
-            // Nuevo comentario en estado de edición
-            currentCommentIdBeingEdited = i;
 
             // Obtengo el comentario original
             let originalComment = commentContainer.getElementsByTagName('p')[0];
@@ -62,7 +29,6 @@ window.addEventListener("load", (event) => {
             hideElement(buttonList[i]);
             hideElement(originalComment);
 
-
             let editableComment = document.getElementById(`commentEdit${commentId}`);
 
             // Abro el collapse, mostrando todo el contenido
@@ -70,7 +36,14 @@ window.addEventListener("load", (event) => {
                 toggle: true,
             })
 
+            let commentTextarea = document.getElementById(`commentEditTextarea${commentId}`);
+
+            let commentErrorMessage = document.getElementById(`commentEditError${commentId}`);
+            commentErrorMessage.textContent = ''; // Si ya existe el error lo escondo y vacio
+
+            let submitButton = document.getElementById(`commentEditSubmit${commentId}`);
             let exitButton = document.getElementById(`commentEditExit${commentId}`);
+
 
             exitButton.addEventListener('click', (event) => {
                 // Escondo el contenido forzando el collapse
@@ -84,10 +57,28 @@ window.addEventListener("load", (event) => {
                     commentContainer.removeChild(editableComment);
                     showElement(buttonList[i]);
                     showElement(originalComment);
-
-                    currentCommentIdBeingEdited = null;
                 })
 
+            })
+
+            submitButton.addEventListener('click', (event) => {
+                let commentText = commentTextarea.value;
+
+                // Validaciones
+                if(!commentText) {
+                    commentErrorMessage.textContent = 'Por favor, ingrese un comentario.';
+                    return false;
+                }
+                if(commentText.length < 10) {
+                    commentErrorMessage.textContent = 'Los comentarios deben de tener mínimo 10 caracteres';
+                    return false;
+                }
+
+                // Hago la solicitud
+
+                if(editComment(commentId, COMMENT_EDIT_ROUTE, commentText)) {
+                    alert('bien papa');
+                }
             })
 
         })
@@ -96,7 +87,7 @@ window.addEventListener("load", (event) => {
 
 /**
  * Crea y devuelve un elemento Form con
- * los elementos necesarios para editar comentario.
+ * los elementos necesarios para editar el comentario.
  *
  * @param   {int}   commentId   ID del comentario a crear
  * @returns {HTMLFormElement}   Elemento completo
@@ -129,6 +120,10 @@ function createCommentElements(commentId) {
     textarea.setAttribute('maxlength', 255);
     textarea.setAttribute('required', true);
 
+    let errorMessage = document.createElement('span');
+    errorMessage.setAttribute('id', `commentEditError${commentId}`);
+    errorMessage.setAttribute('class', 'd-flex text-danger');
+
     // Boton de envio
     let submitButton = document.createElement('button');
     submitButton.setAttribute('type', 'submit');
@@ -150,6 +145,7 @@ function createCommentElements(commentId) {
 
     // Agrego ambos elementos al formulario
     commentForm.append(containerTextarea);
+    commentForm.append(errorMessage);
     commentForm.append(containerButtons);
 
     return commentForm;
@@ -160,7 +156,7 @@ function createCommentElements(commentId) {
  * Bootstrap.
  *
  * @param   {HTMLP}   commentId   ID del comentario a crear
- * @returns {HTMLFormElement}   Elemento completo
+ * @returns {HTMLElement}   Elemento completo
  */
 function hideElement(element) {
     if(!element.classList.contains('d-none'))
@@ -171,19 +167,55 @@ function hideElement(element) {
  * Muestra el elemento deseado removiendo la clase d-none de
  * Bootstrap.
  *
- * @param   {HTMLP}   commentId   ID del comentario a crear
- * @returns {HTMLFormElement}   Elemento completo
+ * @param   {HTMLP}   commentId ID del comentario a crear
+ * @returns {HTMLElement}       Elemento completo
  */
 function showElement(element) {
     if(element.classList.contains('d-none'))
         element.classList.remove('d-none');
 }
 
-function toggleCommentEdit() {
 
+/**
+ * Realiza una consulta AJAX para realizar la edición
+ * de un comentario
+ *
+ * @param   {int}               id            ID del comentario a editar
+ * @param   {string}            url           ID del comentario a editar
+ * @param   {HTMLButtonElement} submitButton  ID del comentario a editar
+ */
+function editComment(id, url, text) {
+    $.ajax({
+        type: 'POST',
+        url: COMMENT_EDIT_ROUTE,
+        data: {
+            id: id,
+            comment: text,
+        },
+        async: true,
+        dataType: 'json',
+        beforeSend: function() {
+            // Deshabilito el submit
+        },
+        success: function (data) {
+            if(data.status === 'success') {
+                console.log(data);
+                return true;
+            }
+            if(data.status === 'error') {
+               alert('non');
+            }
+        },
+        error: function(error) {
+            console.error(error);
+        },
+        complete: function() {
+            // Habilito el submit
+        }
+    });
 }
 
-
+// Sin utilizar por el momento
 function meGusta(id) {
     $.ajax({
         type: 'POST',
@@ -193,19 +225,6 @@ function meGusta(id) {
         dataType: 'json',
         success: function(data) {
             console.log(data['likes']);
-        }
-    });
-}
-
-function editComment(id, url) {
-    $.ajax({
-        type: 'POST',
-        url: COMMENT_EDIT_ROUTE,
-        data: {id: id},
-        async: true,
-        dataType: 'json',
-        success: function (data) {
-            console.log(data['comment']);
         }
     });
 }

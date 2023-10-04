@@ -46,6 +46,40 @@ class InteractionRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Devuelve el comentario publicado por un User en un Post
+     * específico.
+     *
+     * @param $id
+     * @param $postId
+     * @param $userId
+     * @return mixed
+     */
+    public function findUserComment($id, $postId, $userId): mixed
+    {
+        return $this->getEntityManager()
+            ->createQuery('
+                SELECT 
+                    interaction.id,
+                    interaction.comment,
+                    interaction.creation_date,
+                    user.id as user_id,
+                    post.id as post_id
+                FROM 
+                    App:Interaction interaction
+                JOIN interaction.post post
+                JOIN interaction.user user
+                WHERE 
+                    interaction.id = :id
+                    AND post.id = :postId
+                    AND user.id = :userId
+            ')
+            ->setParameter('id', $id)
+            ->setParameter('postId', $postId)
+            ->setParameter('userId', $userId)
+            ->getResult();
+    }
+
 //
 //    public function findPostComments($postId): mixed
 //    {

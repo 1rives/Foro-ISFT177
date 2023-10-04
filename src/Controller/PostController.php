@@ -16,6 +16,7 @@ use Error;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -183,7 +184,8 @@ class PostController extends AbstractController
     }
 
     /**
-     * Editar el comentario de un Post
+     * Editar el comentario de un Post mediante una consulta
+     * AJAX, realizando las validaciones necesarias.
      *
      * @param Request $request
      * @param UserInterface $userInterface
@@ -191,16 +193,60 @@ class PostController extends AbstractController
      * @throws \Exception
      */
     #[Route('/comment/edit', name: 'comment_edit', options: ['expose' => true])]
-    public function editComment(Request $request, PostRepository $postRepository)
+    public function editComment(Request $request, PostRepository $postRepository, Security $security)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        if($request->isXmlHttpRequest()){
-            $commentId = $request->get('id')->getData();
-            $postUrl = $request->get('postUrl')->getData();
+        $defaultErrorMessage = 'Ha habido un error al procesar tu comentario, intente de nuevo.';
+        $successMessage = 'El comentario ha sido actualizado con éxito.';
 
-            $this->em->flush();
-            // ARREGLAR
+        if($request->isXmlHttpRequest()){
+            // Obtengo la URL del post
+            $userCurrentUrl = $request->headers->get('referer');
+
+            $urlPath = parse_url($userCurrentUrl, PHP_URL_PATH);
+            $urlPathArray = explode('/' ,$urlPath);
+
+            $postId = end($urlPathArray);
+            $commentId = $request->request->get('id');
+
+            // VALIDACIONES
+
+            // 1. Ruta correcta, esta siendo post/details/ (Necesario?)
+            // TODO: Reemplazar ruta hardcodeada
+            if(!str_contains($urlPath, '/post/details/')) {
+                return new JsonResponse( array('status' => 'error', 'message' => $defaultErrorMessage) );
+            }
+
+            // 2. Que el Post exista mediante su id
+            $foundPost = $this->em->getRepository(Post::class)->find(1);
+            if(!$foundPost) {
+                return new JsonResponse( array('status' => 'error', 'message' => $defaultErrorMessage) );
+            }
+
+            // 3. Id de comentario exista en ID Post
+            // 4. El usuario tiene que ser el mismo creador del comentario
+            $user = $this->getUser();
+            $userId = $user->getUserIdentifier();
+
+            $postComment = $this->em->getRepository(Interaction::class)->findUserComment($commentId, $postId, $userId);
+            if(!$postComment) {
+                return new JsonResponse( array('status' => 'error', 'message' => $defaultErrorMessage) );
+            }
+
+            return new JsonResponse(array('status' => 'success', 'message' => $successMessage));
+
+            // Genero los datos y actualizo el comentario
+            $newComment = $request->request->get('comment');
+            $updatedDate = New \DateTime();
+
+            // TODO: arreglar "Call to a member function getComment() on array"
+            $postComment->setComment($newComment);
+            $postComment->setCreationDate($updatedDate);
+
+            // $this->em->flush(); Descomentar cuando funcione
+
+            return new JsonResponse(array('status' => 'success', 'message' => $successMessage));
         }else {
             return $this->redirectToRoute('app_post');
         }
