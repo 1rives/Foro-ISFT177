@@ -1,6 +1,9 @@
 const POST_LIKE_ROUTE = Routing.generate('likes');
 const COMMENT_EDIT_ROUTE = Routing.generate('comment_edit');
 const CURRENT_POST_ID = window.location.pathname.split('/').pop();
+const LOADING_BUTTON_CONTENT = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>\n' +
+    '  <span class="visually-hidden" role="status">Cargando</span>';
+
 window.addEventListener("load", (event) => {
     // Obtengo los botones utilizados para editar comentarios
     let buttonList = document.querySelectorAll('button[id*="commentEditButton"]');
@@ -17,29 +20,27 @@ window.addEventListener("load", (event) => {
             // Obtengo el comentario original
             let originalComment = commentContainer.getElementsByTagName('p')[0];
 
-            // Si ya existe el elemento, no lo creo de nuevo
-            let isElementAlreadyCreated = Boolean(document.getElementById(`commentEdit${commentId}`));
-
-            if(!isElementAlreadyCreated) {
-                let newCommentEdit = createCommentElements(commentId);
-                commentContainer.appendChild(newCommentEdit);
-            }
+            // Creo los contenidos del nuevo comentario y los inserto
+            let newComment = createCommentElements(commentId);
+            commentContainer.appendChild(newComment);
 
             // Escondo el comentario actual y muestro la edición
             hideElement(buttonList[i]);
             hideElement(originalComment);
 
+            // Guardo el nuevo comentario
             let editableComment = document.getElementById(`commentEdit${commentId}`);
 
-            // Abro el collapse, mostrando todo el contenido
+            // Abro el collapse, mostrando el contenido
             const bsCollapse = new bootstrap.Collapse(`#commentEdit${commentId}`, {
                 toggle: true,
             })
 
+            // Obtengo los distintos elementos de la nueva edición de comentario
             let commentTextarea = document.getElementById(`commentEditTextarea${commentId}`);
 
             let commentErrorMessage = document.getElementById(`commentEditError${commentId}`);
-            commentErrorMessage.textContent = ''; // Si ya existe el error lo escondo y vacio
+            commentErrorMessage.textContent = ''; // Si ya existe el error lo dejo vacio
 
             let submitButton = document.getElementById(`commentEditSubmit${commentId}`);
             let exitButton = document.getElementById(`commentEditExit${commentId}`);
@@ -61,6 +62,7 @@ window.addEventListener("load", (event) => {
 
             })
 
+            // TODO: Hacer que se muestre el contenido del comentario nuevo
             submitButton.addEventListener('click', (event) => {
                 let commentText = commentTextarea.value;
 
@@ -75,10 +77,18 @@ window.addEventListener("load", (event) => {
                 }
 
                 // Hago la solicitud
+                let sas = editComment(commentId, COMMENT_EDIT_ROUTE, commentText, submitButton);
 
-                if(editComment(commentId, COMMENT_EDIT_ROUTE, commentText)) {
-                    alert('bien papa');
-                }
+                // Escondo el contenido forzando el collapse
+                const bsCollapse = new bootstrap.Collapse(`#commentEdit${commentId}`, {
+                    toggle: true,
+                })
+
+                editableComment.addEventListener('hidden.bs.collapse', event => {
+                    commentContainer.removeChild(editableComment);
+                    showElement(buttonList[i]);
+                    showElement(originalComment);
+                })
             })
 
         })
@@ -90,7 +100,7 @@ window.addEventListener("load", (event) => {
  * los elementos necesarios para editar el comentario.
  *
  * @param   {int}   commentId   ID del comentario a crear
- * @returns {HTMLFormElement}   Elemento completo
+ * @returns {HTMLDivElement}   Elemento completo
  */
 function createCommentElements(commentId) {
 
@@ -184,7 +194,7 @@ function showElement(element) {
  * @param   {string}            url           ID del comentario a editar
  * @param   {HTMLButtonElement} submitButton  ID del comentario a editar
  */
-function editComment(id, url, text) {
+function editComment(id, url, text, submitButton) {
     $.ajax({
         type: 'POST',
         url: COMMENT_EDIT_ROUTE,
@@ -195,7 +205,7 @@ function editComment(id, url, text) {
         async: true,
         dataType: 'json',
         beforeSend: function() {
-            // Deshabilito el submit
+            submitButton.innerHTML = LOADING_BUTTON_CONTENT;
         },
         success: function (data) {
             if(data.status === 'success') {
@@ -203,14 +213,14 @@ function editComment(id, url, text) {
                 return true;
             }
             if(data.status === 'error') {
-               alert('non');
+                console.error(data);
             }
         },
         error: function(error) {
             console.error(error);
         },
         complete: function() {
-            // Habilito el submit
+            submitButton.textContent = 'Enviar';
         }
     });
 }

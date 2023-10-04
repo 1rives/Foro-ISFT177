@@ -31,12 +31,21 @@ class Interaction
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $creation_date = null;
 
+    public function __construct(?bool $user_favorite = null, ?string $comment = null, ?User $user = null, ?Post $post = null, ?\DateTimeInterface $creation_date = null)
+    {
+        $this->user_favorite = $user_favorite;
+        $this->comment = $comment;
+        $this->user = $user;
+        $this->post = $post;
+        $this->creation_date = $creation_date;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function isUserFavorite(): ?bool
+    public function getUserFavorite(): ?bool
     {
         return $this->user_favorite;
     }

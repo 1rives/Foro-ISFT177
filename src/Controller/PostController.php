@@ -193,7 +193,7 @@ class PostController extends AbstractController
      * @throws \Exception
      */
     #[Route('/comment/edit', name: 'comment_edit', options: ['expose' => true])]
-    public function editComment(Request $request, PostRepository $postRepository, Security $security)
+    public function editComment(Request $request, PostRepository $postRepository, InteractionRepository $interaction, Interaction $interaction2, Security $security)
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -219,34 +219,37 @@ class PostController extends AbstractController
             }
 
             // 2. Que el Post exista mediante su id
-            $foundPost = $this->em->getRepository(Post::class)->find(1);
+            $foundPost = $this->em->getRepository(Post::class)->find($postId);
             if(!$foundPost) {
                 return new JsonResponse( array('status' => 'error', 'message' => $defaultErrorMessage) );
             }
 
             // 3. Id de comentario exista en ID Post
-            // 4. El usuario tiene que ser el mismo creador del comentario
-            $user = $this->getUser();
-            $userId = $user->getUserIdentifier();
+            $postComment = $this->em->getRepository(Interaction::class)->find($commentId);
 
-            $postComment = $this->em->getRepository(Interaction::class)->findUserComment($commentId, $postId, $userId);
             if(!$postComment) {
                 return new JsonResponse( array('status' => 'error', 'message' => $defaultErrorMessage) );
             }
 
-            return new JsonResponse(array('status' => 'success', 'message' => $successMessage));
+            // 4. El usuario tiene que ser el mismo creador del comentario
+            $user = $this->getUser();
+            $userId = $user->getUserIdentifier();
+            $commentUserId = $postComment->getUser()->getId();
+
+            if($commentUserId != $userId) {
+                return new JsonResponse( array('status' => 'error', 'message' => $defaultErrorMessage) );
+            }
 
             // Genero los datos y actualizo el comentario
             $newComment = $request->request->get('comment');
             $updatedDate = New \DateTime();
 
-            // TODO: arreglar "Call to a member function getComment() on array"
             $postComment->setComment($newComment);
             $postComment->setCreationDate($updatedDate);
 
-            // $this->em->flush(); Descomentar cuando funcione
+            $this->em->flush();
 
-            return new JsonResponse(array('status' => 'success', 'message' => $successMessage));
+            return new JsonResponse(array('status' => 'success', 'message' => 'Se ha editado el comentario exitosamente'));
         }else {
             return $this->redirectToRoute('app_post');
         }
