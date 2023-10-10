@@ -31,11 +31,17 @@ class PostController extends AbstractController
     private $em;
 
     /**
+     * @var Security
+     */
+    private $security;
+
+    /**
      * @param $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, Security $security)
     {
         $this->em = $em;
+        $this->security = $security;
     }
 
     /**
@@ -79,8 +85,10 @@ class PostController extends AbstractController
             $post->setUrl($this->formatPostURL($url));
 
             // Especifico el usuario
-            // TODO: Investigar por qué es necesario ID 1
-            $user = $this->em->getRepository(User::class)->find(1);
+            // Se toma el id del usuario logeado
+            $userId = $this->security->getUser()->getId();
+            // Se asigna el id a la publicación del post
+            $user = $this->em->getRepository(User::class)->find($userId);
             $post->setUser($user);
 
             $this->em->persist($post);
