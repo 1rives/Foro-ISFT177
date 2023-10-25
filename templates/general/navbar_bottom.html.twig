@@ -1,18 +1,25 @@
 <!-- Start bottom navbar -->
-<nav class="navbar navbar-expand-sm bg-dark bg-gradient py-3">
+<nav class="navbar navbar-expand-sm bg-dark bg-gradient py-3" data-bs-theme="dark">
     <div class="container-lg">
 
+
+        <li class="nav-item list-unstyled pe-2">
+            <span class="nav-link text-white fw-bold user-select-none" aria-current="page">ISFT 177</span>
+        </li>
+
+        <button class="navbar-toggler white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
         <div class="collapse navbar-collapse hid" id="navbarToggle">
-            <ul class="navbar-nav me-auto gap-2 ps-2 ps-xl-0">
+            <ul class="navbar-nav me-auto gap-2 ps-xl-0">
 
 
-                <li class="nav-item">
-                    <span class="nav-link text-white fw-bold user-select-none" aria-current="page">ISFT 177</span>
-                </li>
 
                 <li class="nav-item">
                     <a class="nav-link text-white active" aria-current="page" href="{{ path('app_post') }}">Inicio</a>
                 </li>
+
 
 {#                <li class="nav-item dropdown link-opacity-10-hover">#}
 {#                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">#}
