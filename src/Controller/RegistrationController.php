@@ -51,6 +51,7 @@ class RegistrationController extends AbstractController
         $registration_form = $this->createForm(RegistrationFormType::class, $userData);
         $registration_form->handleRequest($request);
 
+        // TODO: Mejorar validación: Registrarse con un correo ya registrado (Mismo DNI) deberia de enviar código tambien.
         if ($registration_form->isSubmitted() && $registration_form->isValid()) {
             // Obtengo los datos necesarios para validar el usuario
             $submittedDNI = $registration_form->get('dni')->getData();
@@ -60,6 +61,14 @@ class RegistrationController extends AbstractController
             // Si el usuario no existe (DNI)
             if(!$foundUser) {
                 $this->addFlash('error', 'El DNI no está registrado, si sos alumno contactate con un administrador.');
+                return $this->redirectToRoute('app_register');
+            }
+
+            // Si el correo ya existe
+            $submittedEmail = $registration_form->get('email')->getData();
+            $foundUserEmail = $userRepository->findOneBy(array('email' => $submittedEmail));
+            if(!$foundUserEmail) {
+                $this->addFlash('error', 'El correo ya se encuentra registrado.');
                 return $this->redirectToRoute('app_register');
             }
 
@@ -117,11 +126,11 @@ class RegistrationController extends AbstractController
 
             // Genero correo y URL, y envio verificación a User
             $validationEmail = (new TemplatedEmail())
-            ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
-            ->to($registration_form->get('email')->getData())
-            ->subject('Verificá tu correo')
-            ->htmlTemplate('emails/confirmation_email.html.twig');
-            
+                ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
+                ->to($registration_form->get('email')->getData())
+                ->subject('Verificá tu correo')
+                ->htmlTemplate('emails/confirmation_email.html.twig');
+
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $foundUser, $validationEmail);
 
             $this->addFlash('success', 'Se ha enviado un enlace de verificación al correo.');
