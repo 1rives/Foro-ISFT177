@@ -67,7 +67,7 @@ class RegistrationController extends AbstractController
             if($foundUserStatus === 1) {
                 // Genero el correo a enviar en caso de validación
                 $validationEmail = (new TemplatedEmail())
-                    ->from(new Address('no-reply@foroisft177.com', 'Foro ISFT 177'))
+                    ->from(new Address('foroisft@gmail.com', 'Foro ISFT 177'))
                     ->to($foundUser->getEmail())
                     ->subject('Verificá tu correo')
                     ->htmlTemplate('emails/confirmation_email.html.twig');
