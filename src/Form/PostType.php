@@ -29,7 +29,9 @@ class PostType extends AbstractType
                 'label' => 'photo',
                 'required' => false,
             ])
-            ->add('submit', SubmitType::class)
+            ->add('submit', SubmitType::class, [
+                'label' => 'Publicar'
+            ])
         ;
     }
 
