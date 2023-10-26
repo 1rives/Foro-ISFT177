@@ -67,7 +67,7 @@ class RegistrationController extends AbstractController
             // Si el correo ya existe
             $submittedEmail = $registration_form->get('email')->getData();
             $foundUserEmail = $userRepository->findOneBy(array('email' => $submittedEmail));
-            if(!$foundUserEmail) {
+            if($foundUserEmail) {
                 $this->addFlash('error', 'El correo ya se encuentra registrado.');
                 return $this->redirectToRoute('app_register');
             }
@@ -121,6 +121,7 @@ class RegistrationController extends AbstractController
             $foundUser->setDescription($formDescription);
             $foundUser->setRoles($userRole);
             $foundUser->setAccountStatus($unverifiedAccountStatus);
+            $foundUser->setHideEmail(1);
 
             $this->em->flush();
 

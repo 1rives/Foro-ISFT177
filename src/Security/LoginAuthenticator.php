@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mime\Address;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -54,20 +55,10 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         //Se traen todos los datos del usuario con ese username/email
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => $email]);
 
-        //$status = $this->em->getRepository(User::class)->find(1)->isRegistro();
-
         //Si no devuelve nada es porque el usuario no está registrado
         if (!$user) :
             throw new CustomUserMessageAuthenticationException('Usuario no registrado.');
         endif;
-
-        /*if ($user->getRole() != 'ROLE_SISTEMAS' && !$status) :
-            throw new CustomUserMessageAuthenticationException('Login deshabilitado.');
-        endif;
-
-        if (!$user->isIsverified()) :
-            throw new CustomUserMessageAuthenticationException('Usuario no verificado. Por favor revise su email para activar su cuenta.');
-        endif;*/
 
         //En el caso de que se encuentre el usuario registrado, se trae su estado.
         $status = $user->getAccountStatus();

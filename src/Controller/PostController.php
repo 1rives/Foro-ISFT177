@@ -290,6 +290,9 @@ class PostController extends AbstractController
                 $userName = "Usuario" :
                 $userName = $user->getFirstName() . " " . $user->getLastName();
 
+            if(str_contains($user->getFirstName(), 'Admin'))
+                $userName = "Admin";
+
             $arrayElement['user_full_name'] = $userName;
             return $arrayElement;
         }, $array);

@@ -42,10 +42,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     #[Assert\Type('string')]
     #[Assert\Length(
-        min: 3,
-        max: 25
+        min: 6,
+        max: 50
     )]
-   //#[Assert\NoSuspiciousCharacters]
+   #[Assert\NoSuspiciousCharacters]
    //#[Assert\PasswordStrength(
    //    message: 'Debe contener al menos un número y una mayúscula.'
    //)]
@@ -86,9 +86,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\Type('int')]
     #[Assert\Length(
-        min: 1,
+        min: 5,
         max: 10,
-        minMessage: 'Debe contener más de {{ limit }} carácteres',
+        minMessage: 'Debe contener más de {{ limit }} carácter/es',
         maxMessage: 'Debe contener menos de {{ limit }} carácteres'
     )]
     #[Assert\NoSuspiciousCharacters]
