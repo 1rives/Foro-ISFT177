@@ -1,8 +1,8 @@
 const POST_LIKE_ROUTE = Routing.generate('likes');
 const COMMENT_EDIT_ROUTE = Routing.generate('comment_edit');
-const CURRENT_POST_ID = window.location.pathname.split('/').pop();
 const LOADING_BUTTON_CONTENT = '<span class="spinner-border spinner-border-sm" aria-hidden="true"></span>\n' +
     '  <span class="visually-hidden" role="status">Cargando</span>';
+const toastNotification = document.getElementById('liveToast')
 
 window.addEventListener("load", (event) => {
     // Obtengo los botones utilizados para editar comentarios
@@ -11,6 +11,7 @@ window.addEventListener("load", (event) => {
 
     for (let i = 0; i < buttonListLength; i++ ) {
         buttonList[i].addEventListener( 'click', (event) => {
+
             // ID del comentario a editar
             let commentId = event.target.id.replace(/[^0-9]/g, '');
 
@@ -38,6 +39,7 @@ window.addEventListener("load", (event) => {
 
             // Obtengo los distintos elementos de la nueva edición de comentario
             let commentTextarea = document.getElementById(`commentEditTextarea${commentId}`);
+            commentTextarea.value = originalComment.innerText;
 
             let commentErrorMessage = document.getElementById(`commentEditError${commentId}`);
             commentErrorMessage.textContent = ''; // Si ya existe el error lo dejo vacio
@@ -68,7 +70,7 @@ window.addEventListener("load", (event) => {
 
                 // Validaciones
                 if(!commentText) {
-                    commentErrorMessage.textContent = 'Por favor, ingrese un comentario.';
+                    commentErrorMessage.textContent = 'Por favor, ingrese un comentario';
                     return false;
                 }
                 if(commentText.length < 10) {
@@ -76,24 +78,81 @@ window.addEventListener("load", (event) => {
                     return false;
                 }
 
+                if(commentText == originalComment.innerText) {
+                    commentErrorMessage.textContent = 'El comentario no puede ser igual al original';
+                    return false;
+                }
+
                 // Hago la solicitud
-                let sas = editComment(commentId, COMMENT_EDIT_ROUTE, commentText, submitButton);
+                requestCommentEdit(commentId, COMMENT_EDIT_ROUTE, commentText, submitButton);
 
-                // Escondo el contenido forzando el collapse
-                const bsCollapse = new bootstrap.Collapse(`#commentEdit${commentId}`, {
-                    toggle: true,
-                })
-
-                editableComment.addEventListener('hidden.bs.collapse', event => {
-                    commentContainer.removeChild(editableComment);
-                    showElement(buttonList[i]);
-                    showElement(originalComment);
-                })
+                // // Escondo el contenido forzando el collapse
+                // const bsCollapse = new bootstrap.Collapse(`#commentEdit${commentId}`, {
+                //     toggle: true,
+                // })
+                //
+                // editableComment.addEventListener('hidden.bs.collapse', event => {
+                //     commentContainer.removeChild(editableComment);
+                //     showElement(buttonList[i]);
+                //     showElement(originalComment);
+                // })
             })
 
         })
     }
 });
+
+/**
+ * Actualiza el comentario con el nuevo contenido.
+ *
+ * Al actualizar el contenido, se esconderán los elementos
+ * editables y se mostrará el nuevo comentario.
+ *
+ * @param   {int}   commentId   ID del comentario a crear
+ * @returns {HTMLDivElement}   Elemento completo
+ */
+function updateCommentContent(commentId, status) {
+    // Contenedor del comentario
+    let commentContainer = document.getElementById(`commentContent${commentId}`);
+
+    // Obtengo el comentario original
+    let originalComment = commentContainer.getElementsByTagName('p')[0];
+
+    // Guardo el nuevo comentario
+    let editableComment = document.getElementById(`commentEdit${commentId}`);
+
+    // Obtengo el botón para editar el comentario
+    let editButton = document.getElementById(`#commentEditButton${commentId}`);
+
+    let toastMessage = document.getElementById('toast-body__message');
+
+    const bsCollapse = new bootstrap.Collapse(`#commentEdit${commentId}`, {
+        toggle: true,
+    })
+
+    // Creo instancia para mostrar la notificacion
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastNotification);
+
+    if(status.includes('success')) {
+        // Obtengo el nuevo comentario
+        let newCommentText = (document.getElementById(`commentEditTextarea${commentId}`)).value;
+        originalComment.textContent = newCommentText;
+
+        toastMessage.textContent = 'Se ha editado el comentario exitosamente.';
+
+    } else {
+        toastMessage.textContent = 'Ha habido un error al editar el comentario.';
+    }
+
+    editableComment.addEventListener('hidden.bs.collapse', event => {
+        commentContainer.removeChild(editableComment);
+        showElement(editButton);
+        showElement(originalComment);
+    })
+
+    toastBootstrap.show();
+}
+
 
 /**
  * Crea y devuelve un elemento Form con
@@ -194,10 +253,10 @@ function showElement(element) {
  * @param   {string}            url           ID del comentario a editar
  * @param   {HTMLButtonElement} submitButton  ID del comentario a editar
  */
-function editComment(id, url, text, submitButton) {
+function requestCommentEdit(id, url, text, submitButton) {
     $.ajax({
         type: 'POST',
-        url: COMMENT_EDIT_ROUTE,
+        url: url,
         data: {
             id: id,
             comment: text,
@@ -208,16 +267,10 @@ function editComment(id, url, text, submitButton) {
             submitButton.innerHTML = LOADING_BUTTON_CONTENT;
         },
         success: function (data) {
-            if(data.status === 'success') {
-                console.log(data);
-                return true;
-            }
-            if(data.status === 'error') {
-                console.error(data);
-            }
+            updateCommentContent(id, data.status);
         },
         error: function(error) {
-            console.error(error);
+            alert('Ha habido un error con su comentario, intente más tarde o consulte con el administrador.');
         },
         complete: function() {
             submitButton.textContent = 'Enviar';
@@ -225,7 +278,12 @@ function editComment(id, url, text, submitButton) {
     });
 }
 
-// Sin utilizar por el momento
+/**
+ * Sin utilizar
+ *
+ * @param   {int}   commentId   ID del comentario a crear
+ * @returns {HTMLDivElement}   Elemento completo
+ */
 function meGusta(id) {
     $.ajax({
         type: 'POST',

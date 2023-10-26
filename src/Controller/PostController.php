@@ -26,6 +26,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints\Date;
 
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 class PostController extends AbstractController
 {
     private $em;
@@ -119,6 +121,11 @@ class PostController extends AbstractController
         $comments = $interactionRepository->findPostComments($postId);
         $commentsWithNames = $this->addUserNameToArrayElements($comments);
 
+        // Ordeno los comentarios
+        usort($commentsWithNames, function($a, $b) {
+            return $b['creation_date'] <=> $a['creation_date'];
+        });
+
         return $this->render('post/post_details.html.twig', [
             'post' => $post,
             'comments' => $commentsWithNames
@@ -164,6 +171,7 @@ class PostController extends AbstractController
 
     /**
      * Dar me gusta al Post
+     * SIN UTILIZAR
      *
      * @param Request $request
      * @param UserInterface $userInterface
@@ -196,12 +204,11 @@ class PostController extends AbstractController
      * AJAX, realizando las validaciones necesarias.
      *
      * @param Request $request
-     * @param UserInterface $userInterface
      * @return JsonResponse
      * @throws \Exception
      */
     #[Route('/comment/edit', name: 'comment_edit', options: ['expose' => true])]
-    public function editComment(Request $request, PostRepository $postRepository, InteractionRepository $interaction, Interaction $interaction2, Security $security)
+    public function editComment(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -220,7 +227,7 @@ class PostController extends AbstractController
 
             // VALIDACIONES
 
-            // 1. Ruta correcta, esta siendo post/details/ (Necesario?)
+            // 1. Ruta correcta, esta siendo post/details/
             // TODO: Reemplazar ruta hardcodeada
             if(!str_contains($urlPath, '/post/details/')) {
                 return new JsonResponse( array('status' => 'error', 'message' => $defaultErrorMessage) );

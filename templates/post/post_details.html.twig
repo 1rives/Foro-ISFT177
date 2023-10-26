@@ -170,4 +170,20 @@
         </div>
         <!-- End Post Comment Section -->
     </div>
+
+    <!-- Start Post Toast Notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="{{ asset('/image/favicon.ico') }}" class="rounded me-2" alt="ISFT 177">
+                <strong class="me-auto">Notificación del foro</strong>
+                <small>Ahora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toast-body__message">
+                ...
+            </div>
+        </div>
+    </div>
+    <!-- End Post Toast Notification -->
 {% endblock %}
